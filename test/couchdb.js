@@ -1,7 +1,7 @@
 var assert = require('chai').assert,
     url_module = require('url'),
     path = require('path'),
-    couchdb = require('../lib/couchdb'),
+    couchdb = require('../lib'),
     CouchDB = couchdb.CouchDB;
 
 
@@ -13,22 +13,21 @@ describe('couchdb', function() {
     before(function() {
         // db = new CouchDB('http://isaacs.iriscouch.com/');
         db = new CouchDB('https://skimdb.npmjs.com/');
-        db.bind('registry', {
-            cached: true,
-            cacheMapper: function cachePathMapper(options, callback) {
-                // no cache by default
-                var url = url_module.parse(options.url || options.uri),
-                    regexp = /^\/registry\/([a-z-]+)/,
-                    mc = regexp.exec(url.pathname),
-                    filePath = null;
 
-                if (mc && mc.length) {
-                    filePath = path.resolve(__dirname, '../.npm_cache/registry/' + mc[1] + '.json');
-                }
+        var cacheMapper = function cachePathMapper(options, callback) {
+            // no cache by default
+            var url = url_module.parse(options.url || options.uri),
+                regexp = /^\/registry\/([a-z-]+)/,
+                mc = regexp.exec(url.pathname),
+                filePath = null;
 
-                callback(null, filePath);
+            if (mc && mc.length) {
+                filePath = path.resolve(__dirname, '../.npm_cache/registry/' + mc[1] + '.json');
             }
-        });
+
+            callback(null, filePath);
+        };
+
         db.unbind('registry');
         db.bind('registry');
     });
