@@ -12,7 +12,7 @@ describe('couchdb', function() {
 
     before(function() {
         // db = new CouchDB('http://isaacs.iriscouch.com/');
-        db = new CouchDB('https://skimdb.npmjs.com/');
+        db = new CouchDB('http://localhost:15984/');
 
         var cacheMapper = function cachePathMapper(options, callback) {
             // no cache by default
@@ -32,24 +32,34 @@ describe('couchdb', function() {
         db.bind('registry');
     });
 
-    it('version', function(done) {
-        db.version(function(err, version) {
-            assert(version.version && version.uuid);
-            done(err);
+    describe('couchdb', function() {
+        it.only('stats', function(done) {
+            db.stats(function(err, stat) {
+                assert(stat);
+                done(err);
+            });
         });
-    });
+
+        it('version', function(done) {
+            db.version(function(err, version) {
+                assert(version.couchdb && version.version);
+                done(err);
+            });
+        });
 
 
-    it('alldbs', function(done) {
-        db.alldbs(function(err, dbs) {
-            assert(dbs.length);
-            done(err);
+        it('alldbs', function(done) {
+            db.alldbs(function(err, dbs) {
+                assert(dbs.length);
+                done(err);
+            }.name);
         });
     });
 
     describe('registry', function() {
+
         // require authorize
-        it.skip('query', function(done) {
+        it('query', function(done) {
             db.registry.query(function(doc) {
                     if (!doc || doc.deprecated) return;
                     if (doc._id.match(/^npm-test-.+$/) &&
