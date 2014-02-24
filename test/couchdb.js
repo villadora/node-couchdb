@@ -2,6 +2,7 @@ var assert = require('chai').assert,
     url_module = require('url'),
     path = require('path'),
     couchdb = require('../lib'),
+    config = require('./config'),
     CouchDB = couchdb.CouchDB;
 
 
@@ -12,7 +13,8 @@ describe('couchdb', function() {
 
     before(function() {
         // db = new CouchDB('http://isaacs.iriscouch.com/');
-        db = new CouchDB('http://localhost:15984/');
+        db = new CouchDB(config.url);
+        db.auth(config.user, config.pass);
 
         var cacheMapper = function cachePathMapper(options, callback) {
             // no cache by default
@@ -28,12 +30,17 @@ describe('couchdb', function() {
             callback(null, filePath);
         };
 
-        db.unbind('registry');
-        db.bind('registry');
     });
 
+
     describe('couchdb', function() {
-        it.only('stats', function(done) {
+        it('allDbs', function(done) {
+            db.allDbs(function(err, dbs) {
+                assert(dbs.length);
+                done(err);
+            });
+        });
+        it('stats', function(done) {
             db.stats(function(err, stat) {
                 assert(stat);
                 done(err);
@@ -42,22 +49,20 @@ describe('couchdb', function() {
 
         it('version', function(done) {
             db.version(function(err, version) {
-                assert(version.couchdb && version.version);
+                assert(version.version && version.uuid);
                 done(err);
             });
         });
 
-
-        it('alldbs', function(done) {
-            db.alldbs(function(err, dbs) {
-                assert(dbs.length);
+        it('allDesignDocs', function(done) {
+            db.allDesignDocs(function(err, ddocs) {
+                assert(ddocs);
                 done(err);
-            }.name);
+            });
         });
     });
 
-    describe('registry', function() {
-
+    describe.skip('dbs', function() {
         // require authorize
         it('query', function(done) {
             db.registry.query(function(doc) {
