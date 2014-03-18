@@ -12,5 +12,5 @@ There are already many couchdb client in npm, and some of them are great project
 
 (The BSD License)
 
-    Copyright (c) 2013, Villa.Gao <jky239@gmail.com>;
+    Copyright (c) 2014, Villa.Gao <jky239@gmail.com>;
     All rights reserved.

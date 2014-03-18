@@ -33,103 +33,85 @@ describe('couchdb', function() {
     });
 
 
-    describe('couchdb', function() {
-        it('allDbs', function(done) {
-            db.allDbs(function(err, dbs) {
-                assert(dbs.length);
-                done(err);
-            });
+    it('allDbs', function(done) {
+        db.allDbs(function(err, dbs) {
+            console.log(dbs);
+            assert(dbs.length);
+            done(err);
         });
-        it('stats', function(done) {
-            db.stats(function(err, stat) {
-                assert(stat);
-                done(err);
-            });
-        });
+    });
 
-        it('version', function(done) {
-            db.version(function(err, version) {
-                assert(version.version && version.uuid);
-                done(err);
-            });
-        });
-
-        it('allDesignDocs', function(done) {
-            db.allDesignDocs(function(err, ddocs) {
-                assert(ddocs);
+    it('stats', function(done) {
+        db.stats(function(err, stat) {
+            console.log(stat);
+            assert(stat);
+            if (err) return done(err);
+            db.stats('request_time', function(err, stat) {
+                console.log(stat);
                 done(err);
             });
         });
     });
 
-    describe.skip('dbs', function() {
-        // require authorize
-        it('query', function(done) {
-            db.registry.query(function(doc) {
-                    if (!doc || doc.deprecated) return;
-                    if (doc._id.match(/^npm-test-.+$/) &&
-                        doc.maintainers &&
-                        doc.maintainers[0].name === 'isaacs')
-                        return;
-                    var l = doc['dist-tags'] && doc['dist-tags'].latest;
-                    if (!l) return;
-                    l = doc.versions && doc.versions[l];
-                    if (!l) return;
-                    var desc = doc.description || l.description || '';
-                    var readme = doc.readme || l.readme || '';
-                    var d = l.dependencies;
-                    if (!d) return;
-                    for (var dep in d) {
-                        emit([dep, doc._id, desc, readme], 1);
-                    }
-                }, '_sum',
-                function(err, docs) {
-                    console.log(err, docs);
-                    done(err);
-                });
+    it('version', function(done) {
+        db.version(function(err, version) {
+            assert(version.version && version.uuid);
+            done(err);
         });
+    });
 
-
-        it('view', function(done) {
-            db.registry.view('app/dependedUpon', {
-                start_key: '',
-                end_key: 'a',
-                group_level: 1
-            }, function(err, doc) {
-                console.log(err, doc);
-                done(err);
-            });
+    it('activeTasks', function(done) {
+        db.activeTasks(function(err, tasks) {
+            assert(tasks instanceof Array);
+            done(err);
         });
+    });
 
-        it('info', function(done) {
-            db.registry.info(function(err, info) {
-                done(err);
-            });
+    it.skip('restart', function(done) {
+        db.restart(function(err) {
+            done(err);
         });
+    });
 
-        it('allDocs', function(done) {
-            db.registry.allDocs('0', '1', function(err, docs, total, offset) {
-                done(err);
-            });
+
+    // require couchdb 1.4
+    it.skip('dbUpdates', function(done) {
+        db.dbUpdates(function(err, updates) {
+            console.log(updates);
+            done(err);
         });
+    });
 
-        it('designDocs', function(done) {
-            db.registry.designDocs(function(err, ddocs) {
-                assert(ddocs.length);
-                done(err);
-            });
+    it('newUuids', function(done) {
+        db.newUuids(5, function(err, uuids) {
+            assert(uuids.length === 5);
+            done(err);
         });
+    });
 
-        it('docHead', function(done) {
-            db.registry.docHead('not', function(err, res) {
-                done(err);
-            });
-        });
 
-        it('open', function(done) {
-            db.registry.open('not', function(err, doc) {
-                done(err);
+    it('log', function(done) {
+        db.log(function(err, logs) {
+            if (err) return done(err);
+            assert(typeof logs == 'string');
+            assert(logs.length > 0);
+
+            db.log(0, function(err, logs) {
+                if (err) return done(err);
+                assert(logs.length === 0);
+                db.log(50, 10,
+                    function(err, logs) {
+                        done(err);
+                    });
             });
         });
     });
+
+    it('allDesignDocs', function(done) {
+        db.allDesignDocs(function(err, ddocs) {
+            assert(ddocs);
+            done(err);
+        });
+    });
+
 });
