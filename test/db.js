@@ -2,7 +2,7 @@ var assert = require('chai').assert,
     url_module = require('url'),
     path = require('path'),
     couchdb = require('../lib'),
-    config = require('./config'),
+    config = require('./test-config'),
     CouchDB = couchdb.CouchDB;
 
 describe('dbs', function() {
@@ -10,7 +10,6 @@ describe('dbs', function() {
     var db;
 
     before(function() {
-        // db = new CouchDB('http://isaacs.iriscouch.com/');
         db = new CouchDB(config.url);
         db.auth(config.user, config.pass);
         db.bind('registry');
