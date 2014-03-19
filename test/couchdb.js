@@ -1,9 +1,11 @@
 var assert = require('chai').assert,
     url_module = require('url'),
     path = require('path'),
+    semver = require('semver'),
     couchdb = require('../lib'),
     config = require('./test-config'),
     CouchDB = couchdb.CouchDB;
+
 
 
 describe('couchdb', function() {
@@ -11,9 +13,8 @@ describe('couchdb', function() {
 
     var db;
 
-    before(function() {
+    before(function(done) {
         db = new CouchDB(config.url);
-        db.auth(config.user, config.pass);
 
         var cacheMapper = function cachePathMapper(options, callback) {
             // no cache by default
@@ -29,6 +30,10 @@ describe('couchdb', function() {
             callback(null, filePath);
         };
 
+        db.info(function(err, info) {
+            version = info.version;
+            done(err);
+        });
     });
 
 
@@ -40,6 +45,7 @@ describe('couchdb', function() {
     });
 
 
+
     it('newUuids', function(done) {
         db.newUuids(5, function(err, uuids) {
             assert(uuids.length === 5);
@@ -48,11 +54,23 @@ describe('couchdb', function() {
     });
 
 
-    it('version', function(done) {
-        db.version(function(err, version) {
-            assert(version.version && version.uuid);
+    it('info', function(done) {
+        db.info(function(err, info) {
+            assert(info.version && info.uuid);
             done(err);
         });
+    });
+
+
+
+    it('existsDb', function(done) {
+        if (semver.satisfies(version, '>=1.5'))
+            db.existsDb('newdb_not_exists_222323232', function(err, exists) {
+                assert.ok(!exists);
+                done(err);
+            });
+        else
+            done();
     });
 
 
@@ -129,8 +147,18 @@ describe('couchdb', function() {
                 });
             });
 
+            it('dbUpdates', function(done) {
+                if (semver.satisfies(version, '>=1.4'))
+                    db.dbUpdates(function(err, updates) {
+                        console.log(err, updates);
+                        done(err);
+                    });
+                else
+                    done();
+            });
         });
     }
+
 
     describe.skip('others', function() {
         it('restart', function(done) {
@@ -140,13 +168,6 @@ describe('couchdb', function() {
         });
 
 
-        // require couchdb 1.4
-        it('dbUpdates', function(done) {
-            db.dbUpdates(function(err, updates) {
-                console.log(updates);
-                done(err);
-            });
-        });
     });
 
 });
