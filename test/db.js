@@ -127,6 +127,12 @@ describe('dbs', function() {
                 db.testdb.viewCleanup(done);
             });
 
+            it.only('tempView', function(done) {
+                db.registry.tempView(function(doc) {}, '_count', function() {
+                    done();
+                });
+            });
+
             it.skip('query', function(done) {
                 db.registry.query(function(doc) {
                         if (!doc || doc.deprecated) return;
