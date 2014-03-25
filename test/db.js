@@ -48,28 +48,57 @@ describe('dbs', function() {
     });
 
 
+    describe('allDocs', function() {
+        it('normal', function(done) {
+            db.registry.allDocs(0, 1, function(err, docs, total, offset) {
+                done(err);
+            });
+        });
 
-    it('allDocs', function(done) {
-        db.registry.allDocs('0', '1', function(err, docs, total, offset) {
-            done(err);
+        it('executor', function(done) {
+            db.registry.allDocs().setLimit(1).setSkip(0).execute(function(err, rows, total, offset) {
+                done(err);
+            });
         });
     });
 
-    it.skip('designDocs', function(done) {
-        db.registry.designDocs(function(err, ddocs) {
-            assert(ddocs.length);
-            done(err);
+    describe('searchByKeys', function() {
+        it('startkey,endkey', function(done) {
+            db.registry.searchByKeys('0', 'a', function(err, rows, total, offset) {
+                done(err);
+            });
+        });
+
+
+        it('key', function(done) {
+            db.registry.searchByKeys('not', function(err, rows, total, offset) {
+                done(err);
+            });
+        });
+
+        it('keys', function(done) {
+            db.registry.searchByKeys(['not', 'grunt'], function(err, rows, total, offset) {
+                done(err);
+            });
         });
     });
 
-    it.skip('docHead', function(done) {
-        db.registry.docHead('not', function(err, res) {
-            done(err);
+    describe('searchByIds', function() {
+        it('id range', function(done) {
+            db.registry.searchByIds('0', 'a', function(err, rows, total, offset) {
+                done(err);
+            });
+        });
+
+        it('id', function(done) {
+            db.registry.searchByIds('a', function(err, rows, total, offset) {
+                done(err);
+            });
         });
     });
 
-    it.skip('open', function(done) {
-        db.registry.open('not', function(err, doc) {
+    it('allDesignDocs', function(done) {
+        db.registry.allDesignDocs(function(err, ddocs) {
             done(err);
         });
     });
@@ -83,7 +112,6 @@ describe('dbs', function() {
     });
 
     if (config.user) {
-
         describe('require auth', function() {
             before(function() {
                 db.auth(config.user, config.pass);
@@ -127,7 +155,29 @@ describe('dbs', function() {
                 db.testdb.viewCleanup(done);
             });
 
-            it.only('tempView', function(done) {
+            it('bulkSave', function(done) {
+                var docs = [{
+                    name: 'alex',
+                    age: 24
+                }, {
+                    name: 'lee',
+                    age: 26
+                }];
+
+                db.testdb.bulkSave(docs, function(err, rs) {
+                    docs[0].name = "alexixs";
+                    db.testdb.bulkSave(docs, function(err, rs) {
+                        db.testdb.allDocs({
+                            include_docs: true
+                        }, function(err, rs) {
+                            assert(rs[0].doc.name == 'alexixs');
+                            done(err);
+                        });
+                    });
+                });
+            });
+
+            it('tempView', function(done) {
                 db.registry.tempView(function(doc) {}, '_count', function() {
                     done();
                 });
