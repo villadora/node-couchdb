@@ -47,6 +47,18 @@ describe('dbs', function() {
         });
     });
 
+    it('getDoc', function(done) {
+        db.registry.getDoc('not', function(err, doc) {
+            done(err);
+        });
+    });
+
+    it('mgetDocs', function(done) {
+        db.registry.mgetDocs(['not', 'express'], function(err, docs) {
+            done(err);
+        });
+    });
+
 
     describe('allDocs', function() {
         it('normal', function(done) {
@@ -56,7 +68,7 @@ describe('dbs', function() {
         });
 
         it('executor', function(done) {
-            db.registry.allDocs().setLimit(1).setSkip(0).execute(function(err, rows, total, offset) {
+            db.registry.allDocs().limit(1).skip(0).execute(function(err, rows, total, offset) {
                 done(err);
             });
         });

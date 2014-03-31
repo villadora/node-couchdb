@@ -6,7 +6,7 @@ var assert = require('chai').assert,
     config = require('./test-config'),
     CouchDB = couchdb.CouchDB;
 
-describe('dbs', function() {
+describe('doc', function() {
     this.timeout(30000);
 
     var db, version;
@@ -20,6 +20,12 @@ describe('dbs', function() {
         });
     });
 
+    it('open', function(done) {
+        db.registry.doc('not').open(function(err, doc) {
+            done(err);
+        });
+    });
+
 
     if (config.user) {
         describe('require auth', function() {
@@ -27,7 +33,6 @@ describe('dbs', function() {
                 db.auth(config.user, config.pass);
                 db.bind('testdb');
                 db.testdb.create(function(err) {
-                    console.log(err);
                     done(err);
                 });
             });
@@ -69,7 +74,7 @@ describe('dbs', function() {
                 });
             });
 
-            it.only('copy', function(done) {
+            it('copy', function(done) {
                 var doc = db.testdb.doc({
                     _id: 'john',
                     age: 25
