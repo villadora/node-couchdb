@@ -1,5 +1,5 @@
 {
-  "name": "couchdb",
+  "name": "coapi",
   "version": "0.0.1",
   "description": "couchdb client for node, with specific apis",
   "main": "./lib/index.js",
@@ -19,7 +19,8 @@
     "underscore": "~1.6.0",
     "request": "~2.33.0",
     "async": "~0.2.10",
-    "debug": "~0.7.4"
+    "debug": "~0.7.4",
+    "follow": "~0.10.4"
   },
   "devDependencies": {
     "mocha": "~1.17.1",

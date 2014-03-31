@@ -5,7 +5,11 @@ There are already many couchdb client in npm, and some of them are great project
 ## Installation
 
 
+    npm install couchdb --save
+
 ## Usage
+
+### Create database
 
 
 ## License
