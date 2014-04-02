@@ -13,16 +13,15 @@ describe('dbs', function() {
 
     before(function(done) {
         db = new CouchDB(config.url);
-        db.bind('registry');
         db.info(function(err, info) {
             version = info.version;
-            done(err);
+            db.bind('testdb').testdb.create(done);
         });
     });
 
     it('exists', function(done) {
         if (semver.satisfies(version, '>=1.5'))
-            db.registry.exists(function(err, exists) {
+            db.testdb.exists(function(err, exists) {
                 assert(exists);
                 done(err);
             });
@@ -31,30 +30,28 @@ describe('dbs', function() {
     });
 
     it('info', function(done) {
-        db.registry.info(function(err, info) {
+        db.testdb.info(function(err, info) {
             done(err);
         });
     });
 
-    it.skip('view', function(done) {
-        db.registry.view('app/dependedUpon', {
-            start_key: '',
-            end_key: 'a',
-            group_level: 1
-        }, function(err, doc) {
-            console.log(err, doc);
-            done(err);
+
+    it.only('fetch', function(done) {
+        db.testdb.doc({
+            _id: 'not',
+            version: '1.2.3'
+        }).create(function(err) {
+            if (err) return done(err);
+            db.testdb.fetch('not', function(err, doc) {
+                console.log(doc, err);
+                assert.equals(doc.version, '1.2.3');
+                done(err);
+            });
         });
     });
 
-    it('getDoc', function(done) {
-        db.registry.getDoc('not', function(err, doc) {
-            done(err);
-        });
-    });
-
-    it('mgetDocs', function(done) {
-        db.registry.mgetDocs(['not', 'express'], function(err, docs) {
+    it('mfetch', function(done) {
+        db.testdb.mfetch(['not', 'express'], function(err, docs) {
             done(err);
         });
     });
@@ -62,13 +59,13 @@ describe('dbs', function() {
 
     describe('allDocs', function() {
         it('normal', function(done) {
-            db.registry.allDocs(0, 1, function(err, docs, total, offset) {
+            db.testdb.allDocs(0, 1, function(err, docs, total, offset) {
                 done(err);
             });
         });
 
         it('executor', function(done) {
-            db.registry.allDocs().limit(1).skip(0).execute(function(err, rows, total, offset) {
+            db.testdb.allDocs().limit(1).skip(0).execute(function(err, rows, total, offset) {
                 done(err);
             });
         });
@@ -76,20 +73,20 @@ describe('dbs', function() {
 
     describe('searchByKeys', function() {
         it('startkey,endkey', function(done) {
-            db.registry.searchByKeys('0', 'a', function(err, rows, total, offset) {
+            db.testdb.searchByKeys('0', 'a', function(err, rows, total, offset) {
                 done(err);
             });
         });
 
 
         it('key', function(done) {
-            db.registry.searchByKeys('not', function(err, rows, total, offset) {
+            db.testdb.searchByKeys('not', function(err, rows, total, offset) {
                 done(err);
             });
         });
 
         it('keys', function(done) {
-            db.registry.searchByKeys(['not', 'grunt'], function(err, rows, total, offset) {
+            db.testdb.searchByKeys(['not', 'grunt'], function(err, rows, total, offset) {
                 done(err);
             });
         });
@@ -97,27 +94,27 @@ describe('dbs', function() {
 
     describe('searchByIds', function() {
         it('id range', function(done) {
-            db.registry.searchByIds('0', 'a', function(err, rows, total, offset) {
+            db.testdb.searchByIds('0', 'a', function(err, rows, total, offset) {
                 done(err);
             });
         });
 
         it('id', function(done) {
-            db.registry.searchByIds('a', function(err, rows, total, offset) {
+            db.testdb.searchByIds('a', function(err, rows, total, offset) {
                 done(err);
             });
         });
     });
 
     it('allDesignDocs', function(done) {
-        db.registry.allDesignDocs(function(err, ddocs) {
+        db.testdb.allDesignDocs(function(err, ddocs) {
             done(err);
         });
     });
 
 
     it('purge', function(done) {
-        db.registry.purge({
+        db.testdb.purge({
                 id: []
             },
             done);
@@ -129,17 +126,8 @@ describe('dbs', function() {
                 db.auth(config.user, config.pass);
             });
 
-            beforeEach(function(done) {
-                db.bind('testdb').create(done);
-            });
-
-
-            afterEach(function(done) {
-                db.testdb.destroy(done);
-            });
-
             it('create', function(done) {
-                db.registry.create(function(err) {
+                db.testdb.create(function(err) {
                     assert(err.statusCode == 412);
                     db.database('newdb').create(done);
                 });
@@ -190,34 +178,12 @@ describe('dbs', function() {
             });
 
             it('tempView', function(done) {
-                db.registry.tempView(function(doc) {}, '_count', function() {
-                    done();
+                db.testdb.tempView(function(doc) {
+                    emit(doc._id);
+                }, '_count', function(err, docs) {
+                    console.log(err, docs);
+                    done(err);
                 });
-            });
-
-            it.skip('query', function(done) {
-                db.registry.query(function(doc) {
-                        if (!doc || doc.deprecated) return;
-                        if (doc._id.match(/^npm-test-.+$/) &&
-                            doc.maintainers &&
-                            doc.maintainers[0].name === 'isaacs')
-                            return;
-                        var l = doc['dist-tags'] && doc['dist-tags'].latest;
-                        if (!l) return;
-                        l = doc.versions && doc.versions[l];
-                        if (!l) return;
-                        var desc = doc.description || l.description || '';
-                        var readme = doc.readme || l.readme || '';
-                        var d = l.dependencies;
-                        if (!d) return;
-                        for (var dep in d) {
-                            emit([dep, doc._id, desc, readme], 1);
-                        }
-                    }, '_sum',
-                    function(err, docs) {
-                        console.log(err, docs);
-                        done(err);
-                    });
             });
 
         });
