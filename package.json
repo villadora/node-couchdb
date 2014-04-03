@@ -1,5 +1,5 @@
 {
-  "name": "coapi",
+  "name": "capi",
   "version": "0.0.1",
   "description": "couchdb client for node, with specific apis",
   "main": "./lib/index.js",

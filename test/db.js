@@ -11,12 +11,16 @@ describe('dbs', function() {
 
     var db, version;
 
-    before(function(done) {
+    beforeEach(function(done) {
         db = new CouchDB(config.url);
         db.info(function(err, info) {
             version = info.version;
             db.bind('testdb').testdb.create(done);
         });
+    });
+
+    afterEach(function(done) {
+        db.testdb.destroy(done);
     });
 
     it('exists', function(done) {
@@ -36,44 +40,86 @@ describe('dbs', function() {
     });
 
 
-    it.only('fetch', function(done) {
+    it('fetch', function(done) {
         db.testdb.doc({
             _id: 'not',
             version: '1.2.3'
         }).create(function(err) {
             if (err) return done(err);
             db.testdb.fetch('not', function(err, doc) {
-                console.log(doc, err);
-                assert.equals(doc.version, '1.2.3');
+                assert(doc.version == '1.2.3');
                 done(err);
             });
         });
     });
 
     it('mfetch', function(done) {
-        db.testdb.mfetch(['not', 'express'], function(err, docs) {
-            done(err);
+        db.testdb.bulkSave([{
+            _id: 'not',
+            version: '1.2.3'
+        }, {
+            _id: 'express',
+            version: '3.4.5'
+        }], function(err) {
+            if (err) return done(err);
+            db.testdb.mfetch(['not', 'express'], function(err, docs) {
+                assert(docs.length == 2);
+                done(err);
+            });
         });
     });
 
 
     describe('allDocs', function() {
+        beforeEach(function(done) {
+            db.testdb.bulkSave([{
+                _id: 'not',
+                version: '1.2.3'
+            }, {
+                _id: 'express',
+                version: '3.4.5'
+            }], done);
+        });
+
+
         it('normal', function(done) {
-            db.testdb.allDocs(0, 1, function(err, docs, total, offset) {
+            db.testdb.allDocs(0, 1, function(err, rows, total, offset) {
+                assert.equal(rows.length, 1);
+                assert.equal(total, 2);
+                assert.equal(offset, 0);
                 done(err);
             });
         });
 
         it('executor', function(done) {
             db.testdb.allDocs().limit(1).skip(0).execute(function(err, rows, total, offset) {
+                assert.equal(rows.length, 1);
+                assert.equal(total, 2);
+                assert.equal(offset, 0);
                 done(err);
             });
         });
     });
 
     describe('searchByKeys', function() {
+        beforeEach(function(done) {
+            db.testdb.bulkSave([{
+                _id: '01',
+                version: '0.0.0'
+            }, {
+                _id: 'express',
+                version: '3.4.5'
+            }, {
+                _id: 'not',
+                version: '1.2.3'
+            }], done);
+        });
+
         it('startkey,endkey', function(done) {
             db.testdb.searchByKeys('0', 'a', function(err, rows, total, offset) {
+                assert.equal(total, 3);
+                assert.equal(offset, 0);
+                assert.equal(rows.length, 1);
                 done(err);
             });
         });
@@ -81,26 +127,50 @@ describe('dbs', function() {
 
         it('key', function(done) {
             db.testdb.searchByKeys('not', function(err, rows, total, offset) {
+                assert.equal(total, 3);
+                assert.equal(offset, 2);
+                assert.equal(rows.length, 1);
                 done(err);
             });
         });
 
         it('keys', function(done) {
-            db.testdb.searchByKeys(['not', 'grunt'], function(err, rows, total, offset) {
+            db.testdb.searchByKeys(['01', 'not', 'grunt'], function(err, rows, total) {
+                assert.equal(rows.length, 3);
+                assert.equal(total, 3);
                 done(err);
             });
         });
     });
 
     describe('searchByIds', function() {
+        beforeEach(function(done) {
+            db.testdb.bulkSave([{
+                _id: '01',
+                version: '0.0.0'
+            }, {
+                _id: 'express',
+                version: '3.4.5'
+            }, {
+                _id: 'not',
+                version: '1.2.3'
+            }], done);
+        });
+
         it('id range', function(done) {
             db.testdb.searchByIds('0', 'a', function(err, rows, total, offset) {
+                assert.equal(rows.length, 1);
+                assert.equal(total, 3);
+                assert.equal(offset, 0);
                 done(err);
             });
         });
 
         it('id', function(done) {
-            db.testdb.searchByIds('a', function(err, rows, total, offset) {
+            db.testdb.searchByIds('not', function(err, rows, total, offset) {
+                assert.equal(rows.length, 1);
+                assert.equal(total, 3);
+                assert.equal(offset, 2);
                 done(err);
             });
         });
@@ -120,73 +190,83 @@ describe('dbs', function() {
             done);
     });
 
-    if (config.user) {
-        describe('require auth', function() {
-            before(function() {
-                db.auth(config.user, config.pass);
-            });
+    describe('require auth', function() {
+        beforeEach(function() {
+            db.auth(config.user, config.pass);
+        });
 
-            it('create', function(done) {
-                db.testdb.create(function(err) {
-                    assert(err.statusCode == 412);
-                    db.database('newdb').create(done);
+        it('create', function(done) {
+            db.testdb.create(function(err) {
+                assert(err.statusCode == 412);
+                db.database('newdb').create(done);
+            });
+        });
+
+        it('destroy', function(done) {
+            db.database('newdb').destroy(function(err) {
+                if (err) return done(err);
+                db.existsDb('newdb', function(err, exists) {
+                    assert(!exists);
+                    done(err);
                 });
             });
+        });
 
-            it('destroy', function(done) {
-                db.database('newdb').destroy(function(err) {
+        it('compact', function(done) {
+            db.testdb.compact(done);
+        });
+
+        it('ensureCommit', function(done) {
+            db.testdb.ensureCommit(done);
+        });
+
+        it('viewCleanup', function(done) {
+            db.testdb.viewCleanup(done);
+        });
+
+        it('bulkSave', function(done) {
+            var docs = [{
+                name: 'alex',
+                age: 24
+            }, {
+                name: 'lee',
+                age: 26
+            }];
+
+            db.testdb.bulkSave(docs, function(err, rs) {
+                if (err) return done(err);
+                docs[0].name = "alexixs";
+                db.testdb.bulkSave(docs, function(err, rs) {
                     if (err) return done(err);
-                    db.existsDb('newdb', function(err, exists) {
-                        assert(!exists);
+                    db.testdb.allDocs({
+                        include_docs: true
+                    }, function(err, rs) {
+                        assert(rs[0].doc.name == 'alexixs');
                         done(err);
                     });
                 });
             });
+        });
 
-            it('compact', function(done) {
-                db.testdb.compact(done);
-            });
+        it('tempView', function(done) {
+            var docs = [{
+                name: 'alex',
+                age: 24
+            }, {
+                name: 'lee',
+                age: 26
+            }];
 
-            it('ensureCommit', function(done) {
-                db.testdb.ensureCommit(done);
-            });
-
-            it('viewCleanup', function(done) {
-                db.testdb.viewCleanup(done);
-            });
-
-            it('bulkSave', function(done) {
-                var docs = [{
-                    name: 'alex',
-                    age: 24
-                }, {
-                    name: 'lee',
-                    age: 26
-                }];
-
-                db.testdb.bulkSave(docs, function(err, rs) {
-                    docs[0].name = "alexixs";
-                    db.testdb.bulkSave(docs, function(err, rs) {
-                        db.testdb.allDocs({
-                            include_docs: true
-                        }, function(err, rs) {
-                            assert(rs[0].doc.name == 'alexixs');
-                            done(err);
-                        });
-                    });
-                });
-            });
-
-            it('tempView', function(done) {
+            db.testdb.bulkSave(docs, function(err, rs) {
+                if (err) return done(err);
                 db.testdb.tempView(function(doc) {
                     emit(doc._id);
                 }, '_count', function(err, docs) {
-                    console.log(err, docs);
+                    assert.equal(docs.total_rows, 2);
                     done(err);
                 });
             });
-
         });
-    }
+    });
 
 });
