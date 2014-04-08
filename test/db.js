@@ -23,6 +23,34 @@ describe('dbs', function() {
         db.testdb.destroy(done);
     });
 
+
+    it('create', function(done) {
+        var dbc = db.database('db_create');
+        dbc.destroy(function() {
+            dbc.create(function(err) {
+                assert.equal(err, null, 'Failed to create database');
+                dbc.info(function(err, data) {
+                    assert.equal(data.doc_count, 0);
+                    assert.equal(data.db_name, 'db_create');
+                    dbc.destroy(done);
+                });
+            });
+        });
+    });
+
+    it('destroy', function(done) {
+        var dbc = db.database('db_create');
+        dbc.destroy(function() {
+            dbc.create(function(err) {
+                assert.equal(err, null, 'Failed to create database');
+                dbc.destroy(function(err) {
+                    assert.equal(err, null, 'Failed to destroy database');
+                    done(err);
+                });
+            });
+        });
+    });
+
     it('exists', function(done) {
         if (semver.satisfies(version, '>=1.5'))
             db.testdb.exists(function(err, exists) {
@@ -183,6 +211,21 @@ describe('dbs', function() {
     });
 
 
+    it('changes', function(done) {
+        db.testdb.insert({
+            name: 'testdata'
+        }, function() {
+            db.testdb.changes({
+                limit: 1
+            }, function(err, data) {
+                assert.equal(data.results.length, 1, 'Limit doesn\'t work');
+                assert.equal(data.results[0].seq, data.last_seq);
+                done(err);
+            });
+        });
+    });
+
+
     it('purge', function(done) {
         db.testdb.purge({
                 id: []
@@ -193,23 +236,6 @@ describe('dbs', function() {
     describe('require auth', function() {
         beforeEach(function() {
             db.auth(config.user, config.pass);
-        });
-
-        it('create', function(done) {
-            db.testdb.create(function(err) {
-                assert(err.statusCode == 412);
-                db.database('newdb').create(done);
-            });
-        });
-
-        it('destroy', function(done) {
-            db.database('newdb').destroy(function(err) {
-                if (err) return done(err);
-                db.existsDb('newdb', function(err, exists) {
-                    assert(!exists);
-                    done(err);
-                });
-            });
         });
 
         it('compact', function(done) {

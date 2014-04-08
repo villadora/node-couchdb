@@ -1,132 +1,171 @@
 var assert = require('chai').assert,
     url_module = require('url'),
     path = require('path'),
+    fs = require('fs'),
     semver = require('semver'),
     couchdb = require('../lib'),
     config = require('./test-config'),
     CouchDB = couchdb.CouchDB;
 
 describe('doc', function() {
-    this.timeout(30000);
-
     var db, version;
-
+    this.timeout(10000);
     before(function(done) {
         db = new CouchDB(config.url);
-        db.bind('registry');
-        db.info(function(err, info) {
-            version = info.version;
-            done(err);
+        db.bind('testdb');
+        db.testdb.destroy(function() {
+            db.testdb.create(function(err) {
+                if (err) return done('Failed to create testdb');
+                db.testdb.insert({
+                    _id: 'test',
+                    name: 'not'
+                }, function(err) {
+                    if (err) return done('Failed to insert doc');
+                    db.info(function(err, info) {
+                        version = info.version;
+                        done(err);
+                    });
+                });
+            });
+        });
+    });
+
+
+    after(function(done) {
+        // db.testdb.destroy(done);
+        done();
+    });
+
+
+    describe.only('attachment', function() {
+        var doc;
+
+        before(function(done) {
+            doc = db.testdb.doc('test');
+            doc.open(done);
+        });
+
+        it('attach', function(done) {
+            doc.attach('plain.txt', 'test content plain text', 'text/plain', function(err, body) {
+                var s = fs.createReadStream(path.resolve(__dirname, './logo.png')).pipe(
+                    doc.attach('logo.png', null, 'image/png'));
+                s.on('end', function() {
+                    done(err);
+                });
+            });
+        });
+
+        it('get', function(done) {
+            doc.attach('plain.txt', 'test content plain text', 'text/plain', function(err, body) {
+                doc.getAttachment('plain.txt', function(err, buffer) {
+                    assert(!err, 'Failed to get attachment');
+                    assert.equal(buffer.toString(), 'test content plain text');
+                    done(err);
+                });
+            });
+        });
+
+        it('delete', function(done) {
+            doc.delAttachment('logo.png', function(err, body) {
+                if (err) return done(err);
+                doc.getAttachment('logo.png', function(err, buffer) {
+                    assert.equal(err.statusCode, 404, 'Attachment should be deleted');
+                    done();
+                });
+            });
         });
     });
 
     it('open', function(done) {
-        db.registry.doc('not').open(function(err, doc) {
+        db.testdb.doc('test').open(function(err, doc) {
+            assert.equal(doc.name, 'not');
             done(err);
         });
     });
 
 
-    if (config.user) {
-        describe('require auth', function() {
-            beforeEach(function(done) {
-                db.auth(config.user, config.pass);
-                db.bind('testdb');
-                db.testdb.create(function(err) {
-                    done(err);
-                });
-            });
+    it('create', function(done) {
+        var doc = db.testdb.doc({
+            _id: 'not',
+            name: 'alex',
+            age: 24
+        });
 
-            afterEach(function(done) {
-                db.testdb.destroy(function(err) {
-                    db.unbind('testdb');
-                    done(err);
-                });
-            });
-
-            it('create', function(done) {
-                var doc = db.testdb.doc({
-                    _id: 'not',
-                    name: 'alex',
-                    age: 24
-                });
-
-                doc.create(function(err, rs) {
-                    if (err) return done(err);
-                    doc.create(true, function(err, rs) {
-                        done(err);
-                    });
-                });
-            });
-
-            it('destroy', function(done) {
-                var doc = db.testdb.doc({
-                    _id: 'person',
-                    name: 'john',
-                    age: 33
-                });
-
-                doc.create(function(err, rs) {
-                    if (err) return done(err);
-                    doc.del(rs.rev, function(err) {
-                        done(err);
-                    });
-                });
-            });
-
-            it('copy', function(done) {
-                var doc = db.testdb.doc({
-                    _id: 'john',
-                    age: 25
-                });
-                doc.create(function(err) {
-                    if (err) return done(err);
-                    doc.copy('jack', function(err, rs) {
-                        done(err);
-                    });
-                });
+        doc.create(function(err, rs) {
+            if (err) return done(err);
+            doc.create(true, function(err, rs) {
+                done(err);
             });
         });
-    }
+    });
+
+    it('destroy', function(done) {
+        var doc = db.testdb.doc({
+            _id: 'person',
+            name: 'john',
+            age: 33
+        });
+
+        doc.create(function(err, rs) {
+            if (err) return done(err);
+            doc.del(rs.rev, function(err) {
+                done(err);
+            });
+        });
+    });
+
+    it('copy', function(done) {
+        var doc = db.testdb.doc({
+            _id: 'john',
+            age: 25
+        });
+        doc.create(function(err) {
+            if (err) return done(err);
+            doc.copy('jack', function(err, rs) {
+                done(err);
+            });
+        });
+    });
+
 
     it('head', function(done) {
-        db.registry.doc('not').head({
+        db.testdb.doc('test').head({
             revs: true,
             revs_info: true
         }, function(err, headers) {
-            if (err && err.statusCode === 404) return done();
+            assert(headers);
             done(err);
         });
     });
 
 
     it('exists', function(done) {
-        db.registry.doc('not_exists').exists(function(err, e) {
+        db.testdb.doc('not_exists').exists(function(err, e) {
             assert(!e);
             done(err);
         });
     });
 
     it('updateDoc', function() {
-        var doc = db.registry.doc({
+        var doc = db.testdb.doc({
             name: 'john'
         });
 
-        doc.updateDoc({
+        doc.update({
             name: 'jack'
         });
 
-        assert(doc.getDoc().name == 'jack');
+        assert(doc.get().name == 'jack');
     });
 
 
-    it('newDoc', function() {
-        var doc = db.registry.doc({
+    it('new', function() {
+        var doc = db.testdb.doc({
             _id: 'jack johns',
             name: 'jack'
         });
 
-        doc.newDoc();
+        doc.new();
         assert(!doc._id);
 
     });

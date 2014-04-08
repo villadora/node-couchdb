@@ -15,21 +15,6 @@ describe('couchdb', function() {
 
     before(function(done) {
         db = new CouchDB(config.url);
-
-        var cacheMapper = function cachePathMapper(options, callback) {
-            // no cache by default
-            var url = url_module.parse(options.url || options.uri),
-                regexp = /^\/registry\/([a-z-]+)/,
-                mc = regexp.exec(url.pathname),
-                filePath = null;
-
-            if (mc && mc.length) {
-                filePath = path.resolve(__dirname, '../.npm_cache/registry/' + mc[1] + '.json');
-            }
-
-            callback(null, filePath);
-        };
-
         db.info(function(err, info) {
             version = info.version;
             done(err);
@@ -39,7 +24,6 @@ describe('couchdb', function() {
 
     it('allDbs', function(done) {
         db.allDbs(function(err, dbs) {
-            assert(dbs.length);
             done(err);
         });
     });
