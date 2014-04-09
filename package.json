@@ -1,10 +1,10 @@
 {
-  "name": "capi",
-  "version": "0.0.1",
+  "name": "couche",
+  "version": "0.0.3",
   "description": "couchdb client for node, with specific apis",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "couchdb -a couch/couch.ini&; mocha test"
+    "test": "mocha -R spec test"
   },
   "repository": {
     "type": "git",
@@ -18,8 +18,7 @@
   "dependencies": {
     "underscore": "~1.6.0",
     "request": "~2.33.0",
-    "debug": "~0.7.4",
-    "follow": "~0.10.4"
+    "debug": "~0.7.4"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
@@ -28,7 +27,7 @@
   },
   "readmeFilename": "README.md",
   "author": {
-    "name": "wei.gao",
+    "name": "villa.gao",
     "email": "jky239@gmail.com"
   },
   "engines": {

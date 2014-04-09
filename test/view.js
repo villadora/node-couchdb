@@ -6,7 +6,7 @@ var assert = require('chai').assert,
     config = require('./test-config'),
     CouchDB = couchdb.CouchDB;
 
-describe('view', function() {
+describe.skip('view', function() {
     this.timeout(30000);
 
     var db, version;

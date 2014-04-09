@@ -32,23 +32,49 @@ describe('doc', function() {
 
 
     after(function(done) {
-        // db.testdb.destroy(done);
         done();
+        // db.testdb.destroy(done);
     });
 
 
-    describe.only('attachment', function() {
+    describe('attachment', function() {
         var doc;
 
         before(function(done) {
-            doc = db.testdb.doc('test');
-            doc.open(done);
+            doc = db.testdb.doc({});
+            doc.create(function(err) {
+                doc.open(done);
+            });
         });
 
-        it('attach', function(done) {
-            doc.attach('plain.txt', 'test content plain text', 'text/plain', function(err, body) {
+        it('save attachment', function(done) {
+            doc.rev(undefined).open(function(err) {
+                assert.equal(err, null, 'Fail to open document');
+                doc.attach('plain.txt', 'body { font-size:12pt; }', 'text/css');
+                doc.save(function(err, rs) {
+                    done(err);
+                });
+            });
+        });
+
+        it('add many', function(done) {
+            doc.addAttachment([{
+                name: 'place.css',
+                content_type: 'text/css',
+                data: 'body { font-size: 12px; }'
+            }, {
+                name: 'script.js',
+                content_type: 'script/javascript',
+                data: 'window.onload(function() {})'
+            }], function(err, rs) {
+                done(err);
+            });
+        });
+
+        it('add', function(done) {
+            doc.addAttachment('plain.txt', 'test content plain text', 'text/plain', function(err, body) {
                 var s = fs.createReadStream(path.resolve(__dirname, './logo.png')).pipe(
-                    doc.attach('logo.png', null, 'image/png'));
+                    doc.addAttachment('logo.png', null, 'image/png'));
                 s.on('end', function() {
                     done(err);
                 });
@@ -56,7 +82,7 @@ describe('doc', function() {
         });
 
         it('get', function(done) {
-            doc.attach('plain.txt', 'test content plain text', 'text/plain', function(err, body) {
+            doc.addAttachment('plain.txt', 'test content plain text', 'text/plain', function(err, body) {
                 doc.getAttachment('plain.txt', function(err, buffer) {
                     assert(!err, 'Failed to get attachment');
                     assert.equal(buffer.toString(), 'test content plain text');
@@ -148,24 +174,43 @@ describe('doc', function() {
 
     it('updateDoc', function() {
         var doc = db.testdb.doc({
-            name: 'john'
-        });
-
-        doc.update({
+            name: 'john',
+            age: 25
+        }).update({
             name: 'jack'
         });
 
-        assert(doc.get().name == 'jack');
+        assert.equal(doc.get().name, 'jack');
+        assert.equal(doc.get().age, 25);
     });
 
+
+    it('save', function(done) {
+        var doc = db.testdb.doc({
+            name: 'alex',
+            age: 24
+        });
+
+        doc.create(function(err, rs) {
+            assert.equal(err, null, 'Fail to create document');
+            doc.update({
+                name: 'jack'
+            }).save(function(err, rs) {
+                assert.equal(err, null, 'Fail to save document');
+                doc.open(function(err) {
+                    assert.equal(err, null, 'Fail to open document');
+                    assert.equal(doc.get().name, 'jack');
+                    done(err);
+                });
+            });
+        });
+    });
 
     it('new', function() {
         var doc = db.testdb.doc({
             _id: 'jack johns',
             name: 'jack'
-        });
-
-        doc.new();
+        }).new();
         assert(!doc._id);
 
     });

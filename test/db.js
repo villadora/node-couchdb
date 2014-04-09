@@ -15,7 +15,9 @@ describe('dbs', function() {
         db = new CouchDB(config.url);
         db.info(function(err, info) {
             version = info.version;
-            db.bind('testdb').testdb.create(done);
+            db.bind('testdb').testdb.destroy(function() {
+                db.testdb.create(done);
+            });
         });
     });
 
