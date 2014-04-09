@@ -28,7 +28,7 @@ var CouchDB = require('couche').CouchDB;
     server = new CouchDB('http://localhost:5984');
 ```
 
-You can pass username && password to make authentication:
+You can pass username && password to _auth()_ make authentication:
 
 ``` js
 server.auth(username, password);
