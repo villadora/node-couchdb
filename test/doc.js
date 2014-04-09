@@ -180,8 +180,8 @@ describe('doc', function() {
             name: 'jack'
         });
 
-        assert.equal(doc.get().name, 'jack');
-        assert.equal(doc.get().age, 25);
+        assert.equal(doc.doc.name, 'jack');
+        assert.equal(doc.doc.age, 25);
     });
 
 
@@ -199,7 +199,7 @@ describe('doc', function() {
                 assert.equal(err, null, 'Fail to save document');
                 doc.open(function(err) {
                     assert.equal(err, null, 'Fail to open document');
-                    assert.equal(doc.get().name, 'jack');
+                    assert.equal(doc.doc.name, 'jack');
                     done(err);
                 });
             });

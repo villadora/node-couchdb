@@ -6,48 +6,43 @@ var assert = require('chai').assert,
     config = require('./test-config'),
     CouchDB = couchdb.CouchDB;
 
-describe.skip('ddoc', function() {
-    this.timeout(30000);
-
+describe.only('ddoc', function() {
     var db, version;
 
     before(function(done) {
         db = new CouchDB(config.url);
-        db.bind('registry');
-        db.info(function(err, info) {
-            version = info.version;
-            done(err);
+        db.bind('testdb');
+        db.testdb.destroy(function() {
+            db.testdb.create(function(err) {
+                if (err) return done('Failed to create testdb');
+                db.testdb.bulkSave(require('./test-data'), function(err, rs) {
+                    if (err) return done("Failed to save documents");
+                    db.testdb.design('article').set(require('./test-ddoc')).create(function(err) {
+                        if (err) return done("Failed to create design document");
+                        db.info(function(err, info) {
+                            version = info.version;
+                            done(err);
+                        });
+                    });
+                });
+            });
         });
     });
 
 
-    if (config.user) {
-        describe('require auth', function() {
-            beforeEach(function(done) {
-                db.auth(config.user, config.pass);
-                db.bind('testdb');
-                db.testdb.create(function(err) {
-                    console.log(err);
+    it('create & destroy', function(done) {
+        var ddoc = db.testdb.design('test');
+        ddoc.set(require('./test-ddoc')).create(function(err) {
+            if (err) return done('Failed to create new design doc');
+            ddoc.destroy(function(err) {
+                if (err) return done('Failed to destroy new design doc');
+                ddoc.exists(function(err, exists) {
+                    assert.equal(err, null, 'Exists check failed');
+                    assert(!exists);
                     done(err);
                 });
             });
-
-            afterEach(function(done) {
-                db.testdb.destroy(function(err) {
-                    db.unbind('testdb');
-                    done(err);
-                });
-            });
-
-        });
-    }
-
-    it('get', function(done) {
-        db.registry.design('app').get(function(err, rs) {
-            assert(rs);
-            done(err);
         });
     });
-
 
 });
