@@ -21,10 +21,6 @@ describe('dbs', function() {
         });
     });
 
-    afterEach(function(done) {
-        db.testdb.destroy(done);
-    });
-
 
     it('create', function(done) {
         var dbc = db.database('db_create');
@@ -240,7 +236,7 @@ describe('dbs', function() {
             db.auth(config.user, config.pass);
         });
 
-        it('compact', function(done) {
+        it.skip('compact', function(done) {
             db.testdb.compact(done);
         });
 
