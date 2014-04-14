@@ -6,22 +6,34 @@ var assert = require('chai').assert,
     config = require('./test-config'),
     CouchDB = couchdb.CouchDB;
 
-describe.skip('view', function() {
-    this.timeout(30000);
-
-    var db, version;
+describe('view', function() {
+    var db;
 
     before(function(done) {
         db = new CouchDB(config.url);
-        db.bind('registry');
-        db.info(function(err, info) {
-            version = info.version;
-            done(err);
+        db.bind('testdb');
+        db.testdb.destroy(function() {
+            db.testdb.create(function(err) {
+                if (err) return done('Failed to create testdb');
+                db.testdb.bulkSave(require('./test-data'), function(err, rs) {
+                    if (err) return done("Failed to save documents");
+                    db.testdb.design('article').set(require('./test-ddoc')).create(function(err) {
+                        if (err) return done("Failed to create design document");
+                        db.info(function(err, info) {
+                            version = info.version;
+                            done(err);
+                        });
+                    });
+                });
+            });
         });
     });
 
+
     it('query', function(done) {
-        db.registry.view('app/dependedUpon').query().limit(5).key('not').exec(function(err, rows) {
+        db.testdb.view('article/all').query().limit(5).exec(function(err, rows, total, offset) {
+            if (err) return done('View query failed');
+            assert(rows.length);
             done(err);
         });
     });

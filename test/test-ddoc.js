@@ -47,6 +47,7 @@ module.exports = {
   },
   lists: {
     short: function(head, req) {
+      var out = {};
       while (row = getRow()) {
         if (!row.id) continue;
         out[row.id] = true;

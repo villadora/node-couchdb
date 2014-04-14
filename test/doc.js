@@ -134,7 +134,7 @@ describe('doc', function() {
 
         doc.create(function(err, rs) {
             if (err) return done(err);
-            doc.del(rs.rev, function(err) {
+            doc.del(function(err) {
                 done(err);
             });
         });

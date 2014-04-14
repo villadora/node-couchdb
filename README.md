@@ -68,6 +68,7 @@ You can extend database:
 db.bind({
    // read documents by page
    page: function(n, limit, callback) {
+       // Don't use skip/limit do page on views, see http://docs.couchdb.org/en/1.5.x/couchapp/views/pagination.html#views-pagination
        return this.select().skip((n-1)*limit).limit(limit|| this.defaultLimit).exec(callback);
    },
    defaultLimit: 20
