@@ -1,4 +1,4 @@
-# Node Couchdb Client - Couche
+# Node Couchdb Client
 
 [![Build Status](https://travis-ci.org/villadora/node-couchdb.png)](https://travis-ci.org/villadora/node-couchdb)
 
@@ -10,21 +10,21 @@ There are already many couchdb client in npm, and some of them are great project
 
 ## Installation
 
-    npm install couche --save
+    npm install couch-db --save
 
 ## Usage
 
 Create a couch server:
 
 ``` js
-var couche = require('couche'),
-    server = couche('http://localhost:5984');
+var couch = require('couch-db'),
+    server = couch('http://localhost:5984');
 ```
 
 Or
 
 ``` js
-var CouchDB = require('couche').CouchDB;
+var CouchDB = require('couch-db').CouchDB;
     server = new CouchDB('http://localhost:5984');
 ```
 
@@ -49,17 +49,17 @@ server.login(username, password, function(err) {
 Get a database:
 
 ``` js
-var db = server.database('couche');
+var db = server.database('couch');
 ```
 
 Or using bind:
 
 ``` js
-server.bind('couche');
-var db = server.couche;
+server.bind('couch');
+var db = server.couch;
 
 // destroy
-server.unbind('couche');
+server.unbind('couch');
 ```
 
 You can extend database:
@@ -84,7 +84,7 @@ db.page(1, 20, function(err, rows) {
 Create database and insert new doc
 
 ``` js
-var server = require('couche')('http://localhost:5984');
+var server = require('couch-db')('http://localhost:5984');
 
 var db = server.database('test');
 db.destroy(function(err) {
