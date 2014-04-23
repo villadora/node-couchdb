@@ -81,7 +81,7 @@ describe('ddoc', function() {
     it('list', function(done) {
         var ddoc = db.testdb.design('article');
         ddoc.list('short').view('all', function(err, body, res) {
-            assert(body);
+            assert(body && body instanceof Array);
             assert.equal(body.length, 2);
             done(err);
         });

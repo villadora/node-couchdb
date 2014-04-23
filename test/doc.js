@@ -73,8 +73,10 @@ describe('doc', function() {
 
         it('add', function(done) {
             doc.addAttachment('plain.txt', 'test content plain text', 'text/plain', function(err, body) {
-                var s = fs.createReadStream(path.resolve(__dirname, './logo.png')).pipe(
-                    doc.addAttachment('logo.png', null, 'image/png'));
+                var d = doc.addAttachment('logo.png', null, 'image/png');
+                if (!d)
+                    return done('Failed to create read stream');
+                var s = fs.createReadStream(path.resolve(__dirname, './logo.png')).pipe(d);
                 s.on('end', function() {
                     done(err);
                 });
