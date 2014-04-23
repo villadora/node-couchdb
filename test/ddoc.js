@@ -87,6 +87,14 @@ describe('ddoc', function() {
         });
     });
 
+
+    it.skip('update', function(done) {
+        var ddoc = db.testdb.design('article');
+        ddoc.update('udpate').doc('great-book', function(err) {
+            done(err);
+        });
+    });
+
     describe('attachment', function() {
         var ddoc;
         before(function(done) {
