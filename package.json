@@ -1,6 +1,6 @@
 {
   "name": "couch-db",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "couchdb client for node, with specific apis",
   "main": "./lib/index.js",
   "scripts": {
