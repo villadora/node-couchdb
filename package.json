@@ -1,16 +1,20 @@
 {
   "name": "couch-db",
   "version": "1.0.6",
-  "description": "couchdb client for node, with specific apis",
+  "description": "extendable couchdb client for nodejs, with convenient apis",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "mocha -R spec test"
+    "test": "mocha -R travis-cov  test"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:villadora/node-couchdb.git"
   },
+  "bugs": {
+    "url": "https://github.com/villadora/node-couchdb/issues"
+  },
   "keywords": [
+    "couch",
     "couchdb",
     "couch-client",
     "api"
@@ -18,13 +22,22 @@
   "dependencies": {
     "underscore": "~1.6.0",
     "request": "~2.33.0",
-    "follow": "^0.11.0",
-    "debug": "~0.7.4"
+    "follow": "~0.11.0",
+    "debug": "~0.7.4",
+    "blanket": "~1.1.6"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
     "chai": "~1.9.0",
+    "coveralls": "~2.10.0",
+    "mocha-lcov-reporter": "0.0.1",
+    "travis-cov": "~0.2.5",
     "semver": "~2.2.1"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "node-couchdb/lib/"
+    }
   },
   "readmeFilename": "README.md",
   "author": {

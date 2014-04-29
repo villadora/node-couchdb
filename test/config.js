@@ -29,6 +29,14 @@ describe('config', function() {
         });
     });
 
+    it('get missing', function(done) {
+        db.config().get('missing section', 'missing value', function(err, value) {
+            /* jshint eqnull: true */
+            assert(value === undefined);
+            done(err);
+        });
+    });
+
     it('set', function(done) {
         db.config().set('log', 'level', Math.random() > 0.5 ? 'info' : 'debug', function(err, oldVal) {
             done(err);
@@ -36,7 +44,7 @@ describe('config', function() {
     });
 
 
-    it.skip('del', function(done) {
+    it('del', function(done) {
         db.config().del('log', 'level', function(err, oldVal) {
             done(err);
         });

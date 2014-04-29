@@ -40,9 +40,11 @@ module.exports = {
   },
   shows: {
     content: function(doc, req) {
-      provides("html", function() {
-        return '<p>' + doc.body + '</p>';
-      });
+      if (doc)
+        provides("html", function() {
+          return '<p>' + doc.body + '</p>';
+        });
+      else provides("html", "<p>No document is provided</p>")
     }
   },
   lists: {

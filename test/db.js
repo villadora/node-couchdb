@@ -21,6 +21,21 @@ describe('dbs', function() {
         });
     });
 
+
+    it('bind', function(done) {
+        db.testdb.bind({
+            visit:0,
+            information: function() {
+                this.info.apply(this, arguments);
+            }
+        });
+
+        assert.equal(db.testdb.visit, 0);
+        db.testdb.information(function(err, info) {
+            done(err);
+        });
+    });
+
     describe('follow', function() {
         it('with callback', function(done) {
             db.testdb.follow({

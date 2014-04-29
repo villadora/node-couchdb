@@ -2,11 +2,24 @@
 
 [![Build Status](https://travis-ci.org/villadora/node-couchdb.png)](https://travis-ci.org/villadora/node-couchdb)
 
-There are already many couchdb client in npm, and some of them are great project, but still not implements all the couchdb features that satisfied my needs in auth and flexibility, and not updated for one year. Some other libs has fewer apis and failed to meet needs. Even some are not complete yet or not freindly to use. 
+There are already many couchdb client in npm, and some of them are great project, but still not implements the couchdb features that satisfied my needs in auth and flexibility, and not updated for one year. Some other libs has fewer apis and failed to meet needs. Even some are not complete yet or not freindly to use. 
 
+When you just want to get/save docs into couchdb, you may just need a simple http request lib like [request](mikeal/request). But when your application heavely depends on couch, you may want something that make code better orgnized rather than concating query strings in everywhere.
+
+
+- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
 - [APIs](#apis)
+
+
+## Features
+
+* Extendable via bind, to format your own apis
+* Supports view, list and shows
+* Chain for query paramters, easy and clean
+* All the concepts (View, Document, etc.) are seperated, which make this lib support urls that get rewritted
+* Treats DesignDoc the same as Document, you can do operations on DesignDoc
 
 ## Installation
 
@@ -108,7 +121,7 @@ db.destroy(function(err) {
 
 ## APIs
 
-## Server
+### Server
 
 
 ## Database
