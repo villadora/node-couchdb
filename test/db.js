@@ -22,8 +22,8 @@ describe('dbs', function() {
     });
 
 
-    it('bind', function(done) {
-        db.testdb.bind({
+    it('extend', function(done) {
+        db.testdb.extend({
             visit:0,
             information: function() {
                 this.info.apply(this, arguments);

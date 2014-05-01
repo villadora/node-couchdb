@@ -15,11 +15,11 @@ When you just want to get/save docs into couchdb, you may just need a simple htt
 
 ## Features
 
-* Extendable via bind, to format your own apis
-* Supports view, list and shows
+* Extendable via bind, to build your own apis
+* Support view, list and shows
 * Chain for query paramters, easy and clean
 * All the concepts (View, Document, etc.) are seperated, which make this lib support urls that get rewritted
-* Treats DesignDoc the same as Document, you can do operations on DesignDoc
+* Treat DesignDoc the same as Document, you can do operations on DesignDoc
 
 ## Installation
 
@@ -78,7 +78,7 @@ server.unbind('couch');
 You can extend database:
 
 ``` js
-db.bind({
+db.extend({
    // read documents by page
    page: function(n, limit, callback) {
        // Don't use skip/limit do page on views, see http://docs.couchdb.org/en/1.5.x/couchapp/views/pagination.html#views-pagination
@@ -126,6 +126,8 @@ db.destroy(function(err) {
 
 ## Database
 
+
+### db.tempView
 
 ## Document
 
