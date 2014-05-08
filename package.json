@@ -41,7 +41,7 @@
   },
   "config": {
     "blanket": {
-      "pattern": "/lib/"
+      "pattern": "node-couchdb/lib/"
     }
   },
   "readmeFilename": "README.md",

@@ -29,6 +29,51 @@ describe('view', function() {
         });
     });
 
+    it('betweenIds', function(done) {
+        db.testdb.view('article/all').query().betweenIds('couchdb-design', 'great-book').exec(function(err, docs) {
+            done(err);
+        });
+    });
+
+    it('betweenKeys', function(done) {
+        db.testdb.view('article/all').query().betweenKeys('couchdb-design', 'great-book').exec(function(err, docs) {
+            done(err);
+        });
+    });
+
+
+    it('fetch', function(done) {
+        db.testdb.view('article/all').fetch('great-book', function(err, docs) {
+            assert(docs[0].key == 'great-book');
+            done(err);
+        });;
+    });
+
+    it('mfetch', function(done) {
+        db.testdb.view('article/all').mfetch(['great-book', 'couchdb-design'], function(err, docs) {
+            assert.equal(docs.length, 2);
+            done(err);
+        });
+    });
+    
+    it('query all', function(done) {
+        db.testdb.view('article/all').query(function(err, rows, total, offset) {
+            if (err) return done('View query failed');
+            assert(rows.length);
+            done(err);
+        });
+    });
+
+    it('query with options', function(done) {
+        db.testdb.view('article/all').query({limit: 5}).exec(function(err, rows, total, offset) {
+            if (err) return done('View query failed');
+            assert(rows.length);
+            done(err);
+        });
+    });
+
+
+
 
     it('query', function(done) {
         db.testdb.view('article/all').query().limit(5).exec(function(err, rows, total, offset) {

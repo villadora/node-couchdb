@@ -2,7 +2,7 @@ module.exports = {
   "language": "javascript",
   "views": {
     "all": {
-      "map": "function(doc) { if(doc.type == 'article') { emit(null, doc); }  }"
+      "map": "function(doc) { if(doc.type == 'article') { emit(doc._id, doc); }  }"
     },
     "by_author_id": {
       map: function(doc) {
@@ -44,7 +44,9 @@ module.exports = {
         provides("html", function() {
           return '<p>' + doc.body + '</p>';
         });
-      else provides("html", "<p>No document is provided</p>");
+      else provides("html", function() {
+          return  "<p>No document is provided</p>";
+      });
     }
   },
   lists: {

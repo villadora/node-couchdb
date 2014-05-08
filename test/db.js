@@ -295,6 +295,20 @@ describe('dbs', function() {
             db.testdb.viewCleanup(done);
         });
 
+        it('insert', function(done) {
+            db.testdb.insert({
+                kind: 'dog'
+            }, function(err, doc) {
+                if(err) return done(err);
+                db.testdb.insert({
+                    kind: 'cat'
+                }, 'cat1', function(err, doc) {
+                    assert(doc.id == 'cat1');
+                    done(err);
+                });
+            });
+        });
+
         it('bulkSave', function(done) {
             var docs = [{
                 name: 'alex',

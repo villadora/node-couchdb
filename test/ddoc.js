@@ -70,10 +70,13 @@ describe('ddoc', function() {
 
     it('show', function(done) {
         var ddoc = db.testdb.design('article');
-        ddoc.show('content').doc('great-book', function(err, body, res) {
-            assert(body);
-            assert.equal(res.headers['content-type'], 'text/html; charset=utf-8');
-            done(err);
+        ddoc.show('content').get(function(err, body, res) {
+            if(err) return done(err);
+            ddoc.show('content').doc('great-book', function(err, body, res) {
+                assert(body);
+                assert.equal(res.headers['content-type'], 'text/html; charset=utf-8');
+                done(err);
+            });
         });
     });
 
