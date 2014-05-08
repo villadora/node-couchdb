@@ -8,7 +8,7 @@ var assert = require('chai').assert,
 describe('couchdb', function() {
     var db;
 
-    it('create', function(done) {
+    it('create server', function(done) {
         couchdb(config.url).info(function(err, info) {
             assert(info);
             done(err);

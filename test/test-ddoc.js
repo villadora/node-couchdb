@@ -44,7 +44,7 @@ module.exports = {
         provides("html", function() {
           return '<p>' + doc.body + '</p>';
         });
-      else provides("html", "<p>No document is provided</p>")
+      else provides("html", "<p>No document is provided</p>");
     }
   },
   lists: {

@@ -2,10 +2,11 @@
 
 [![Build Status](https://travis-ci.org/villadora/node-couchdb.png)](https://travis-ci.org/villadora/node-couchdb)
 
-There are already many couchdb client in npm, and some of them are great project, but still not implements the couchdb features that satisfied my needs in auth and flexibility, and not updated for one year. Some other libs has fewer apis and failed to meet needs. Even some are not complete yet or not freindly to use. 
+There are already many couchdb client in npm, and some of them are great projects, like [nano](https://github.com/dscape/nano), [cradle](https://github.com/flatiron/cradle), but still not implements the couchdb features that satisfied my needs in auth, view operations and flexibility. Some libs has fewer apis and failed to meet needs. Even some are not complete yet or not friendly to use. 
 
-When you just want to get/save docs into couchdb, you may just need a simple http request lib like [request](mikeal/request). But when your application heavely depends on couch, you may want something that make code better orgnized rather than concating query strings in everywhere.
+There is always arguments that whether we really need a library for couchdb as it has rest apis. To me, if I'm working on a small project that read/write some documents from couchdb, I'm happy to work with http request lib like [request](mikeal/request). 
 
+But when your applications heavily depends on couch, you may want something that make code better orgnized rather than concating url strings in everywhere.
 
 - [Features](#features)
 - [Installation](#installation)
@@ -16,10 +17,12 @@ When you just want to get/save docs into couchdb, you may just need a simple htt
 ## Features
 
 * Extendable via bind, to build your own apis
-* Support view, list and shows
+* Support view, lists and shows
 * Chain for query paramters, easy and clean
 * All the concepts (View, Document, etc.) are seperated, which make this lib support urls that get rewritted
 * Treat DesignDoc the same as Document, you can do operations on DesignDoc
+* Support Https
+
 
 ## Installation
 
@@ -27,11 +30,15 @@ When you just want to get/save docs into couchdb, you may just need a simple htt
 
 ## Usage
 
-Create a couch server:
+#### Create a couch server
 
 ``` js
 var couch = require('couch-db'),
     server = couch('http://localhost:5984');
+/// or 
+server = couch('https://localhost:6984', {
+    rejectUnauthorized: false // this will pass to request
+});
 ```
 
 Or
@@ -41,13 +48,13 @@ var CouchDB = require('couch-db').CouchDB;
     server = new CouchDB('http://localhost:5984');
 ```
 
-You can pass username && password to _auth()_ make authentication:
+#### Authenticate with username && password
 
 ``` js
 server.auth(username, password);
 ```
 
-Or you can utilize the session by login:
+#### Or you can utilize the session by login
 
 ``` js
 server.login(username, password, function(err) {
@@ -59,7 +66,7 @@ server.login(username, password, function(err) {
 });
 
 
-Get a database:
+#### Get a database
 
 ``` js
 var db = server.database('couch');
@@ -75,7 +82,7 @@ var db = server.couch;
 server.unbind('couch');
 ```
 
-You can extend database:
+#### You can extend database
 
 ``` js
 db.extend({
@@ -94,7 +101,7 @@ db.page(1, 20, function(err, rows) {
 ```
 
 
-Create database and insert new doc
+#### Create database and insert new doc
 
 ``` js
 var server = require('couch-db')('http://localhost:5984');
@@ -121,10 +128,14 @@ db.destroy(function(err) {
 
 ## APIs
 
-### Server
+### CouchDB
 
+```js
+var CouchDB = require('couch-db').CouchDB;
+```
+#### 
 
-## Database
+### Database
 
 
 ### db.tempView

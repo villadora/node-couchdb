@@ -3,4 +3,5 @@ node_modules
 *.log
 couch/
 !couch/couch.ini
+!couch/cert
 *.html

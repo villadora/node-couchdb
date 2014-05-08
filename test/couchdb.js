@@ -9,7 +9,7 @@ var assert = require('chai').assert,
 
 
 describe('couchdb', function() {
-    this.timeout(30000);
+    this.timeout(3000);
 
     var db;
 
@@ -58,7 +58,6 @@ describe('couchdb', function() {
     });
 
 
-
     if (config.user) {
         describe('require auth', function() {
 
@@ -79,7 +78,7 @@ describe('couchdb', function() {
             });
 
             it('session', function(done) {
-                db.session(function(err, sessio) {
+                db.session(function(err, session) {
                     done(err);
                 });
             });
@@ -134,7 +133,6 @@ describe('couchdb', function() {
             it('dbUpdates', function(done) {
                 if (semver.satisfies(version, '>=1.4'))
                     db.dbUpdates(function(err, updates) {
-                        console.log(err, updates);
                         done(err);
                     });
                 else

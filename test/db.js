@@ -332,8 +332,8 @@ describe('dbs', function() {
                 if (err) return done(err);
                 db.testdb.tempView(function(doc) {
                     emit(doc._id);
-                }, '_count', function(err, docs) {
-                    assert.equal(docs.total_rows, 2);
+                }, '_count', function(err, rs) {
+                    assert.equal(rs.rows[0].value, 2);
                     done(err);
                 });
             });
