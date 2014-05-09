@@ -4,7 +4,7 @@
   "description": "extendable couchdb client for nodejs, with convenient apis",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "mocha -r blanket -R travis-cov test"
+    "test": "mocha -r blanket -R mocha-lcov-reporter test | ./node_modules/.bin/coveralls"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "mocha": "~1.17.1",
     "blanket": "~1.1.6",
     "chai": "~1.9.0",
-    "coveralls": "~2.10.0",
+    "coveralls": "^2.10.0",
     "mocha-lcov-reporter": "0.0.1",
     "travis-cov": "~0.2.5",
     "semver": "~2.2.1",
