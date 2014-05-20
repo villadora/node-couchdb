@@ -38,7 +38,7 @@ describe('ddoc', function() {
   });
 
   it('info', function(done) {
-    var ddoc = db.testdb.design('article');
+    var ddoc = db.testdb.designDoc('article');
     ddoc.info(function(err, info) {
       if (err) return done('Failed to get info of designDoc');
       done(err);

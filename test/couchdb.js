@@ -39,6 +39,8 @@ describe('couchdb', function() {
     assert(db.testdb !== old);
   });
 
+
+
   it('unbind', function() {
     db.unbind('testdb'); // do nothing, no error
     db.bind('testdb');

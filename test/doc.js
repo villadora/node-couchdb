@@ -210,6 +210,13 @@ describe('doc', function() {
     });
   });
 
+
+  it('create Document', function() {
+    assert.throws(function() {
+      new Document();
+    });
+  });
+
   it('new', function() {
     var doc = db.testdb.doc({
       _id: 'jack johns',
