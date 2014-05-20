@@ -12,18 +12,21 @@ describe('doc', function() {
   this.timeout(10000);
   before(function(done) {
     db = new CouchDB(config.url);
-    db.bind('testdb');
-    db.testdb.destroy(function() {
-      db.testdb.create(function(err) {
-        if (err) return done('Failed to create testdb');
-        db.testdb.insert({
-          _id: 'test',
-          name: 'not'
-        }, function(err) {
-          if (err) return done('Failed to insert doc');
-          db.info(function(err, info) {
-            version = info.version;
-            done(err);
+    db.login(config.user, config.pass, function(err) {
+      if (err) return done(err);
+      db.bind('testdb');
+      db.testdb.destroy(function() {
+        db.testdb.create(function(err) {
+          if (err) return done('Failed to create testdb');
+          db.testdb.insert({
+            _id: 'test',
+            name: 'not'
+          }, function(err) {
+            if (err) return done('Failed to insert doc');
+            db.info(function(err, info) {
+              version = info.version;
+              done(err);
+            });
           });
         });
       });
@@ -32,8 +35,7 @@ describe('doc', function() {
 
 
   after(function(done) {
-    done();
-    // db.testdb.destroy(done);
+    db.logout(done);
   });
 
 

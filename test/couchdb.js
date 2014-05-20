@@ -12,13 +12,19 @@ describe('couchdb', function() {
   this.timeout(3000);
 
   var db;
-
   before(function(done) {
     db = new CouchDB(config.url);
-    db.info(function(err, info) {
-      version = info.version;
-      done(err);
+    db.login(config.user, config.pass, function(err) {
+      if (err) return done(err);
+      db.info(function(err, info) {
+        version = info.version;
+        done(err);
+      });
     });
+  });
+
+  after(function(done) {
+    db.logout(done);
   });
 
   it('bind', function() {

@@ -12,21 +12,29 @@ describe('view', function() {
   before(function(done) {
     db = new CouchDB(config.url);
     db.bind('testdb');
-    db.testdb.destroy(function() {
-      db.testdb.create(function(err) {
-        if (err) return done('Failed to create testdb');
-        db.testdb.bulkSave(require('./test-data'), function(err, rs) {
-          if (err) return done("Failed to save documents");
-          db.testdb.design('article').set(require('./test-ddoc')).create(function(err) {
-            if (err) return done("Failed to create design document");
-            db.info(function(err, info) {
-              version = info.version;
-              done(err);
+    db.login(config.user, config.pass, function(err) {
+      if (err) return done(err);
+
+      db.testdb.destroy(function() {
+        db.testdb.create(function(err) {
+          if (err) return done('Failed to create testdb');
+          db.testdb.bulkSave(require('./test-data'), function(err, rs) {
+            if (err) return done("Failed to save documents");
+            db.testdb.design('article').set(require('./test-ddoc')).create(function(err) {
+              if (err) return done("Failed to create design document");
+              db.info(function(err, info) {
+                version = info.version;
+                done(err);
+              });
             });
           });
         });
       });
     });
+  });
+
+  after(function(done) {
+    db.logout(done);
   });
 
   it('betweenIds', function(done) {

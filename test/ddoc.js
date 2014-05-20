@@ -12,17 +12,20 @@ describe('ddoc', function() {
 
   before(function(done) {
     db = new CouchDB(config.url);
-    db.bind('testdb');
-    db.testdb.destroy(function() {
-      db.testdb.create(function(err) {
-        if (err) return done('Failed to create testdb');
-        db.testdb.bulkSave(require('./test-data'), function(err, rs) {
-          if (err) return done("Failed to save documents");
-          db.testdb.design('article').set(require('./test-ddoc')).create(function(err) {
-            if (err) return done("Failed to create design document");
-            db.info(function(err, info) {
-              version = info.version;
-              done(err);
+    db.login(config.user, config.pass, function(err) {
+      if (err) return done(err);
+      db.bind('testdb');
+      db.testdb.destroy(function() {
+        db.testdb.create(function(err) {
+          if (err) return done('Failed to create testdb');
+          db.testdb.bulkSave(require('./test-data'), function(err, rs) {
+            if (err) return done("Failed to save documents");
+            db.testdb.design('article').set(require('./test-ddoc')).create(function(err) {
+              if (err) return done("Failed to create design document");
+              db.info(function(err, info) {
+                version = info.version;
+                done(err);
+              });
             });
           });
         });
@@ -30,7 +33,9 @@ describe('ddoc', function() {
     });
   });
 
-
+  after(function(done) {
+    db.logout(done);
+  });
 
   it('info', function(done) {
     var ddoc = db.testdb.design('article');

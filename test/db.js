@@ -12,17 +12,23 @@ describe('dbs', function() {
   var db, version;
 
   beforeEach(function(done) {
-    db = new CouchDB(config.url, {
-      request: require('request').defaults({
-        method: 'GET'
-      }) // test request replacer
-    });
-    db.info(function(err, info) {
-      version = info.version;
-      db.bind('testdb').testdb.destroy(function() {
-        db.testdb.create(done);
+    db = new CouchDB(config.url, {});
+
+    db.login(config.user, config.pass, function(err) {
+      if (err) return done(err);
+      db.info(function(err, info) {
+        version = info.version;
+        db.bind('testdb').testdb.destroy(function(err) {
+          db.testdb.create(function(err) {
+            done(err);
+          });
+        });
       });
     });
+  });
+
+  afterEach(function(done) {
+    db.logout(done);
   });
 
 
