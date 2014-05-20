@@ -45,7 +45,7 @@ module.exports = {
           return '<p>' + doc.body + '</p>';
         });
       else provides("html", function() {
-          return  "<p>No document is provided</p>";
+        return "<p>No document is provided</p>";
       });
     }
   },

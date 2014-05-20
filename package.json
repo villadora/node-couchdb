@@ -4,7 +4,8 @@
   "description": "extendable couchdb client for nodejs, with convenient apis",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "mocha -r blanket -R mocha-lcov-reporter test | ./node_modules/.bin/coveralls"
+    "test": "mocha -r blanket -R mocha-lcov-reporter test | ./node_modules/.bin/coveralls",
+    "test-cov": "mocha -r blanket -R html-cov test > coverage.html"
   },
   "repository": {
     "type": "git",

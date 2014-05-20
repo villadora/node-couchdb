@@ -1,13 +1,13 @@
 var assert = require('chai').assert,
-    url_module = require('url'),
-    path = require('path'),
-    semver = require('semver'),
-    couchdb = require('../lib'),
-    config = require('./test-config'),
-    CouchDB = couchdb.CouchDB;
+  url_module = require('url'),
+  path = require('path'),
+  semver = require('semver'),
+  couchdb = require('../lib'),
+  config = require('./test-config'),
+  CouchDB = couchdb.CouchDB;
 
 describe.skip('https', function() {
-/*
+  /*
     this.timeout(3000);
     var db;
     before(function() {

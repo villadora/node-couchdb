@@ -4,4 +4,6 @@ node_js:
     - "0.10"
 services:
     - couchdb
-before_scripts: couchdb -V
+before_scripts:
+    - couchdb -V
+    - curl -X PUT http://localhost:5984/_config/admins/admin -d "\"admin\""
