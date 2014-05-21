@@ -96,9 +96,9 @@ describe('ddoc', function() {
   });
 
 
-  it.skip('update', function(done) {
+  it('update', function(done) {
     var ddoc = db.testdb.design('article');
-    ddoc.update('udpate').doc('great-book', function(err) {
+    ddoc.update('change', 'great-book', function(err, body) {
       done(err);
     });
   });

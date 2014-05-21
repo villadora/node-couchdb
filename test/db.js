@@ -4,6 +4,7 @@ var assert = require('chai').assert,
   semver = require('semver'),
   couchdb = require('../lib'),
   config = require('./test-config'),
+  Database = require('../lib/db'),
   CouchDB = couchdb.CouchDB;
 
 describe('dbs', function() {
@@ -12,23 +13,23 @@ describe('dbs', function() {
   var db, version;
 
   beforeEach(function(done) {
-    db = new CouchDB(config.url, {});
+    db = new CouchDB(config.url, {
+      request: require('request').defaults()
+    });
 
-    db.login(config.user, config.pass, function(err) {
-      if (err) return done(err);
-      db.info(function(err, info) {
-        version = info.version;
-        db.bind('testdb').testdb.destroy(function(err) {
-          db.testdb.create(function(err) {
-            done(err);
-          });
+    db.auth(config.user, config.pass);
+    db.info(function(err, info) {
+      version = info.version;
+      db.bind('testdb').testdb.destroy(function(err) {
+        db.testdb.create(function(err) {
+          done(err);
         });
       });
     });
   });
 
-  afterEach(function(done) {
-    db.logout(done);
+  afterEach(function() {
+    db.auth();
   });
 
 
@@ -95,6 +96,14 @@ describe('dbs', function() {
 
 
   it('create', function(done) {
+    assert.throws(function() {
+      new Database();
+    });
+
+    assert.throws(function() {
+      new Database('url');
+    });
+
     var dbc = db.database('db_create');
     dbc.destroy(function() {
       dbc.create(function(err) {
@@ -102,9 +111,19 @@ describe('dbs', function() {
         dbc.info(function(err, data) {
           assert.equal(data.doc_count, 0);
           assert.equal(data.db_name, 'db_create');
-          dbc.destroy(done);
+          dbc.create(function(err) {
+            assert.equal(err.error, 'file_exists');
+            dbc.destroy(done);
+          });
         });
       });
+    });
+  });
+
+  it('newUuids', function() {
+    var db = new Database('url', 'db');
+    assert.throws(function() {
+      db.newUuids(5);
     });
   });
 
@@ -181,11 +200,15 @@ describe('dbs', function() {
 
 
     it('normal', function(done) {
-      db.testdb.allDocs(0, 1, function(err, rows, total, offset) {
-        assert.equal(rows.length, 1);
+      db.testdb.allDocs(function(err, rows, total, offset) {
+        if (err) return done(err);
         assert.equal(total, 2);
-        assert.equal(offset, 0);
-        done(err);
+        db.testdb.allDocs(0, 1, function(err, rows, total, offset) {
+          assert.equal(rows.length, 1);
+          assert.equal(total, 2);
+          assert.equal(offset, 0);
+          done(err);
+        });
       });
     });
 
@@ -215,20 +238,32 @@ describe('dbs', function() {
 
     it('startkey,endkey', function(done) {
       db.testdb.searchByKeys('0', 'a', function(err, rows, total, offset) {
+        if (err) return done(err);
         assert.equal(total, 3);
         assert.equal(offset, 0);
         assert.equal(rows.length, 1);
-        done(err);
+        db.testdb.select().betweenKeys('0', 'a').exec(function(err, rows, total, offset) {
+          assert.equal(total, 3);
+          assert.equal(offset, 0);
+          assert.equal(rows.length, 1);
+          done(err);
+        });
       });
     });
 
 
     it('key', function(done) {
       db.testdb.searchByKeys('not', function(err, rows, total, offset) {
+        if (err) return done(err);
         assert.equal(total, 3);
         assert.equal(offset, 2);
         assert.equal(rows.length, 1);
-        done(err);
+        db.testdb.searchByKeys('not', {}, function(err, rows, total, offset) {
+          assert.equal(total, 3);
+          assert.equal(offset, 2);
+          assert.equal(rows.length, 1);
+          done(err);
+        });
       });
     });
 
@@ -266,10 +301,16 @@ describe('dbs', function() {
 
     it('id', function(done) {
       db.testdb.searchByIds('not', function(err, rows, total, offset) {
+        if (err) return done(err);
         assert.equal(rows.length, 1);
         assert.equal(total, 3);
         assert.equal(offset, 2);
-        done(err);
+        db.testdb.searchByIds('not', {}, function(err, rows, total, offset) {
+          assert.equal(rows.length, 1);
+          assert.equal(total, 3);
+          assert.equal(offset, 2);
+          done(err);
+        });
       });
     });
   });
@@ -340,6 +381,53 @@ describe('dbs', function() {
             done(err);
           });
         });
+      });
+    });
+
+    it('save', function(done) {
+      db.testdb.save('oneperson', {
+        name: 'jane',
+        age: 25
+      }, function(err) {
+        if (err) return done(err);
+        var doc = db.testdb.doc('oneperson');
+        doc.open(function(err) {
+          if (err) return done(err);
+          db.testdb.save('oneperson', doc.doc, function(err) {
+            done(err);
+          });
+        });
+      });
+    });
+
+
+    it('revisions', function(done) {
+      assert.throws(function() {
+        db.testdb.revisionsDiff();
+      });
+
+      db.testdb.missingRevisions({
+        "c6114c65e295552ab1019e2b046b10e": [
+          "3-b06fcd1c1c9e0ec7c480ee8aa467bf3b",
+          "3-0e871ef78849b0c206091f1a7af6ec41"
+        ]
+      }, function(err, body) {
+        if (err) return done(err);
+        var rl = db.testdb.revisionsLimit();
+        rl.get(function(err, limit) {
+          if (err) return done(err);
+          rl.set(500, function(err, body) {
+            done(err);
+          });
+        });
+      });
+    });
+
+    it('security', function(done) {
+      var s = db.testdb.security();
+      s.get(function(err, sec) {
+        if (err) return done(err);
+        s.set(sec, done);
       });
     });
 

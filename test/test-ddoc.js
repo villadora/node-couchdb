@@ -1,5 +1,21 @@
 module.exports = {
   "language": "javascript",
+  "updates": {
+    change: function(doc, req) {
+      if (!doc)
+        return [null, {
+          'code': 404,
+          'json': {
+            'error': 'missed',
+            'reason': 'no document to update'
+          }
+        }];
+      doc.viewed = new Date().toISOString();
+      return [doc, JSON.stringify({
+        ok: "updated"
+      })];
+    }
+  },
   "views": {
     "all": {
       "map": "function(doc) { if(doc.type == 'article') { emit(doc._id, doc); }  }"
