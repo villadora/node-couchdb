@@ -24,7 +24,8 @@
     "underscore": "~1.6.0",
     "request": "~2.33.0",
     "follow": "~0.11.0",
-    "debug": "~0.7.4"
+    "debug": "~0.7.4",
+    "mocha-lcov-reporter": "0.0.1"
   },
   "devDependencies": {
     "mocha": "~1.17.1",
