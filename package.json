@@ -4,10 +4,10 @@
   "description": "extendable couchdb client for nodejs, with convenient apis",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "npm run lint && mocha -R spec test",
-    "lcov": "istanbul cover _mocha --report lcovonly -- -R spec",
-    "coveralls": "npm run lint && npm run lcov && (cat coverage/lcov.info | coveralls || exit 0)",
-    "lint": "jshint {lib,test}/*.js package.json",
+    "test": "npm run lint && ./node_modules/.bin/mocha -R spec test",
+    "lcov": "./node_modules/.bin/istanbul cover _mocha --report lcovonly -- -R spec",
+    "coveralls": "npm run lint && npm run lcov && (cat coverage/lcov.info | ./node_modules/.bin/coveralls || exit 0)",
+    "lint": "./node_modules/.bin/jshint {lib,test}/*.js package.json",
     "test-cov": "mocha -r blanket -R html-cov test > coverage.html"
   },
   "repository": {
@@ -27,11 +27,10 @@
     "underscore": "~1.6.0",
     "request": "~2.33.0",
     "follow": "~0.11.0",
-    "debug": "~0.7.4",
-    "mocha-lcov-reporter": "0.0.1",
-    "istanbul": "^0.2.10"
+    "debug": "~0.7.4"
   },
   "devDependencies": {
+    "istanbul": "^0.2.10",
     "mocha": "~1.17.1",
     "blanket": "~1.1.6",
     "chai": "~1.9.0",
@@ -39,11 +38,7 @@
     "mocha-lcov-reporter": "0.0.1",
     "travis-cov": "~0.2.5",
     "semver": "~2.2.1",
-    "grunt": "^0.4.4",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-clean": "^0.5.0"
+    "jshint": "^2.5.1"
   },
   "config": {
     "blanket": {
