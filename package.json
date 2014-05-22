@@ -4,7 +4,10 @@
   "description": "extendable couchdb client for nodejs, with convenient apis",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "mocha -r blanket -R mocha-lcov-reporter test | ./node_modules/.bin/coveralls",
+    "test": "npm run lint && mocha -R spec test",
+    "lcov": "istanbul cover _mocha --report lcovonly -- -R spec",
+    "coveralls": "npm run lint && npm run lcov && (cat coverage/lcov.info | coveralls || exit 0)",
+    "lint": "jshint {lib,test}/*.js package.json",
     "test-cov": "mocha -r blanket -R html-cov test > coverage.html"
   },
   "repository": {
@@ -25,7 +28,8 @@
     "request": "~2.33.0",
     "follow": "~0.11.0",
     "debug": "~0.7.4",
-    "mocha-lcov-reporter": "0.0.1"
+    "mocha-lcov-reporter": "0.0.1",
+    "istanbul": "^0.2.10"
   },
   "devDependencies": {
     "mocha": "~1.17.1",

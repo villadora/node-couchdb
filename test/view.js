@@ -54,7 +54,7 @@ describe('view', function() {
     db.testdb.view('article/all').fetch('great-book', function(err, docs) {
       assert(docs[0].key == 'great-book');
       done(err);
-    });;
+    });
   });
 
   it('mfetch', function(done) {
