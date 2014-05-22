@@ -5,6 +5,5 @@ node_js:
 services:
     - couchdb
 script: npm run coveralls
-before_scripts:
-    - couchdb -V
+before_script:
     - curl -X PUT http://localhost:5984/_config/admins/admin -d "\"admin\""

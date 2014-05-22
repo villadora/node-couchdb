@@ -7,7 +7,7 @@
     "test": "npm run lint && ./node_modules/.bin/mocha -R spec test",
     "lcov": "./node_modules/.bin/istanbul cover _mocha --report lcovonly -- -R spec",
     "coveralls": "npm run lint && npm run lcov && (cat coverage/lcov.info | ./node_modules/.bin/coveralls || exit 0)",
-    "lint": "./node_modules/.bin/jshint {lib,test}/*.js package.json",
+    "lint": "./node_modules/.bin/jshint lib/*.js test/*.js package.json",
     "test-cov": "mocha -r blanket -R html-cov test > coverage.html"
   },
   "repository": {
