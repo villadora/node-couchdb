@@ -1,6 +1,4 @@
-# Node Couchdb Client [![NPM version](https://badge.fury.io/js/node-couchdb.svg)](http://badge.fury.io/js/node-couchdb) [![Build Status](https://travis-ci.org/villadora/node-couchdb.png)](https://travis-ci.org/villadora/node-couchdb) 
-
-<!-- [![Coverage Status](https://coveralls.io/repos/villadora/node-couchdb/badge.png)](https://coveralls.io/r/villadora/node-couchdb) -->
+# Node Couchdb Client [![NPM version](https://badge.fury.io/js/couch-db.svg)](http://badge.fury.io/js/couch-db) [![Build Status](https://travis-ci.org/villadora/node-couchdb.png)](https://travis-ci.org/villadora/node-couchdb)  [![Coverage Status](https://coveralls.io/repos/villadora/node-couchdb/badge.png)](https://coveralls.io/r/villadora/node-couchdb)
 
 There are already many couchdb client in npm, and some of them are great projects, like [nano](https://github.com/dscape/nano), [cradle](https://github.com/flatiron/cradle), but still not implements the couchdb features that satisfied my needs in auth, view operations and flexibility. Some libs has fewer apis and failed to meet needs. Even some are not complete yet or not friendly to use. 
 
