@@ -47,51 +47,49 @@ describe('dbs', function() {
     });
   });
 
-  describe('follow', function() {
-    it('with callback', function(done) {
-      db.testdb.follow({
-        include_docs: true
-      }, function(err, data) {
-        assert(data.doc);
-        this.stop();
-        done(err);
-      });
-
-      db.testdb.bulkSave([{
-        _id: 'not',
-        version: '1.2.3'
-      }, {
-        _id: 'pkg',
-        version: '0.3.12'
-      }]);
+  it('follow with callback', function(done) {
+    db.testdb.follow({
+      include_docs: true
+    }, function(err, data) {
+      assert(data.doc);
+      this.stop();
+      done(err);
     });
 
-    it('with feed', function(done) {
-      var feed = db.testdb.follow({
-        include_docs: true
-      });
+    db.testdb.bulkSave([{
+      _id: 'not',
+      version: '1.2.3'
+    }, {
+      _id: 'pkg',
+      version: '0.3.12'
+    }]);
+  });
 
-      feed.on('change', function(change) {
-        assert(change.doc);
-        this.stop();
-        done();
-      });
-
-      feed.on('error', function(err) {
-        this.stop();
-        done(err);
-      });
-
-      feed.follow();
-
-      db.testdb.bulkSave([{
-        _id: 'not',
-        version: '1.2.3'
-      }, {
-        _id: 'pkg',
-        version: '0.3.12'
-      }]);
+  it('follow with feed', function(done) {
+    var feed = db.testdb.follow({
+      include_docs: true
     });
+
+    feed.on('change', function(change) {
+      assert(change.doc);
+      this.stop();
+      done();
+    });
+
+    feed.on('error', function(err) {
+      this.stop();
+      done(err);
+    });
+
+    feed.follow();
+
+    db.testdb.bulkSave([{
+      _id: 'not',
+      version: '1.2.3'
+    }, {
+      _id: 'pkg',
+      version: '0.3.12'
+    }]);
   });
 
 
@@ -324,9 +322,9 @@ describe('dbs', function() {
 
   it('purge', function(done) {
     db.testdb.purge({
-        id: []
-      },
-      done);
+      id: []
+    },
+                    done);
   });
 
   describe('require auth', function() {
@@ -365,7 +363,7 @@ describe('dbs', function() {
         name: 'alex',
         age: 24
       }, {
-        name: 'lee',
+          name: 'lee',
         age: 26
       }];
 
