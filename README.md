@@ -62,7 +62,7 @@ server.login(username, password, function(err) {
         // final work
     });
 });
-
+```
 
 #### Get a database
 
