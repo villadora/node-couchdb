@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Node-couchdb by villadora</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Node-couchdb</h1>
+        <h2>An extendable couch client lib for nodejs</h2>
+        <a href="https://github.com/villadora/node-couchdb" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="node-couchdb-client" class="anchor" href="#node-couchdb-client"><span class="octicon octicon-link"></span></a>Node Couchdb Client</h1>
+
+<p>There are already many couchdb client in npm, and some of them are great projects, like <a href="https://github.com/dscape/nano">nano</a>, <a href="https://github.com/flatiron/cradle">cradle</a>, but still not implements the couchdb features that satisfied my needs in auth, view operations and flexibility. Some libs has fewer apis and failed to meet needs. Even some are not complete yet or not friendly to use. </p>
+
+<p>There is always arguments that whether we really need a library for couchdb as it has rest apis. To me, if I'm working on a small project that read/write some documents from couchdb, I'm happy to work with http request lib like <a href="mikeal/request">request</a>. </p>
+
+<p>But when your applications heavily depends on couch, you may want something that make code better orgnized rather than concating url strings in everywhere.</p>
+
+<ul>
+<li><a href="#features">Features</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage">Usage</a></li>
+<li>
+<a href="#apis">APIs</a>
+
+<ul>
+<li><a href="#couchdb">CouchDB</a></li>
+<li><a href="#database">Database</a></li>
+</ul>
+</li>
+</ul><h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Extendable via bind, to build your own apis</li>
+<li>Support view, lists and shows</li>
+<li>Chain for query paramters, easy and clean</li>
+<li>All the concepts (View, Document, etc.) are seperated, which make this lib support urls that get rewritted</li>
+<li>Treat DesignDoc the same as Document, you can do operations on DesignDoc</li>
+<li>Support Https</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<pre><code>npm install couch-db --save
+</code></pre>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h4>
+<a name="create-a-couch-server" class="anchor" href="#create-a-couch-server"><span class="octicon octicon-link"></span></a>Create a couch server</h4>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">couch</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'couch-db'</span><span class="p">),</span>
+    <span class="nx">server</span> <span class="o">=</span> <span class="nx">couch</span><span class="p">(</span><span class="s1">'http://localhost:5984'</span><span class="p">);</span>
+<span class="c1">/// or </span>
+<span class="nx">server</span> <span class="o">=</span> <span class="nx">couch</span><span class="p">(</span><span class="s1">'https://localhost:6984'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">rejectUnauthorized</span><span class="o">:</span> <span class="kc">false</span> <span class="c1">// this will pass to request</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>Or</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">CouchDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'couch-db'</span><span class="p">).</span><span class="nx">CouchDB</span><span class="p">;</span>
+    <span class="nx">server</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CouchDB</span><span class="p">(</span><span class="s1">'http://localhost:5984'</span><span class="p">);</span>
+</pre></div>
+
+<h4>
+<a name="authenticate-with-username--password" class="anchor" href="#authenticate-with-username--password"><span class="octicon octicon-link"></span></a>Authenticate with username &amp;&amp; password</h4>
+
+<div class="highlight highlight-js"><pre><span class="nx">server</span><span class="p">.</span><span class="nx">auth</span><span class="p">(</span><span class="nx">username</span><span class="p">,</span> <span class="nx">password</span><span class="p">);</span>
+</pre></div>
+
+<h4>
+<a name="or-you-can-utilize-the-session-by-login" class="anchor" href="#or-you-can-utilize-the-session-by-login"><span class="octicon octicon-link"></span></a>Or you can utilize the session by login</h4>
+
+<div class="highlight highlight-js"><pre><span class="nx">server</span><span class="p">.</span><span class="nx">login</span><span class="p">(</span><span class="nx">username</span><span class="p">,</span> <span class="nx">password</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// do admin ops</span>
+    <span class="p">....</span>
+    <span class="nx">server</span><span class="p">.</span><span class="nx">logout</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// final work</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="get-a-database" class="anchor" href="#get-a-database"><span class="octicon octicon-link"></span></a>Get a database</h4>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">server</span><span class="p">.</span><span class="nx">database</span><span class="p">(</span><span class="s1">'couch'</span><span class="p">);</span>
+</pre></div>
+
+<p>Or using bind:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">server</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">'couch'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">server</span><span class="p">.</span><span class="nx">couch</span><span class="p">;</span>
+
+<span class="c1">// destroy</span>
+<span class="nx">server</span><span class="p">.</span><span class="nx">unbind</span><span class="p">(</span><span class="s1">'couch'</span><span class="p">);</span>
+</pre></div>
+
+<h4>
+<a name="you-can-extend-database" class="anchor" href="#you-can-extend-database"><span class="octicon octicon-link"></span></a>You can extend database</h4>
+
+<div class="highlight highlight-js"><pre><span class="nx">db</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+   <span class="c1">// read documents by page</span>
+   <span class="nx">page</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">limit</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+       <span class="c1">// Don't use skip/limit do page on views, see http://docs.couchdb.org/en/1.5.x/couchapp/views/pagination.html#views-pagination</span>
+       <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">select</span><span class="p">().</span><span class="nx">skip</span><span class="p">((</span><span class="nx">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">limit</span><span class="p">).</span><span class="nx">limit</span><span class="p">(</span><span class="nx">limit</span><span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">defaultLimit</span><span class="p">).</span><span class="nx">exec</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
+   <span class="p">},</span>
+   <span class="nx">defaultLimit</span><span class="o">:</span> <span class="mi">20</span>
+<span class="p">});</span>
+
+
+<span class="nx">db</span><span class="p">.</span><span class="nx">page</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rows</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// get page items</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="create-database-and-insert-new-doc" class="anchor" href="#create-database-and-insert-new-doc"><span class="octicon octicon-link"></span></a>Create database and insert new doc</h4>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'couch-db'</span><span class="p">)(</span><span class="s1">'http://localhost:5984'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">server</span><span class="p">.</span><span class="nx">database</span><span class="p">(</span><span class="s1">'test'</span><span class="p">);</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">destroy</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// create a new database</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// insert a document with id 'jack johns'</span>
+        <span class="nx">db</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span> <span class="nx">_id</span><span class="o">:</span> <span class="s1">'jack johns'</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">'jack'</span> <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'insertion failed '</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span>
+            <span class="c1">// body will like following:</span>
+            <span class="c1">//   { ok: true,</span>
+            <span class="c1">//     id: 'jack johns',</span>
+            <span class="c1">//     rev: '1-610953b93b8bf1bae12427e2de181307' }</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<h2>
+<a name="apis" class="anchor" href="#apis"><span class="octicon octicon-link"></span></a>APIs</h2>
+
+<h3>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h3>
+
+<p>Most of classes in this lib is accept an option object to let you configure the behaviors that how to request to the server.</p>
+
+<p>All the options that you can pass to <a href="mikeal/request">request</a>, you can set here. So you can control whether use <em>strictSSL</em>, <em>proxy</em> yourself.</p>
+
+<p>Is there any other additional options that is used by [couch-db][villadora/node-couchdb)?</p>
+
+<p>None except one: <em>request</em>. The request options is let user to take full control of how to send request to the server, and of course, you have to follow the <em>request</em> api. Via this options, you can do cache layer to reduce request via modules like <a href="kaelzhang/node-modified">modified</a>, or even intercept the response.</p>
+
+<p>So except the <em>request</em> field, you can treat the options is the same as options in <a href="https://github.com/mikeal/request">request</a>.</p>
+
+<p>You can go and see the doc <a href="https://github.com/mikeal/request">there</a>.</p>
+
+<h3>
+<a name="couchdb" class="anchor" href="#couchdb"><span class="octicon octicon-link"></span></a>CouchDB</h3>
+
+<h4>
+<a name="new-couchdburl-options" class="anchor" href="#new-couchdburl-options"><span class="octicon octicon-link"></span></a>new CouchDB(url, [options])</h4>
+
+<ul>
+<li>url {string} couchdb address</li>
+<li>options {object=} </li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">CouchDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'couch-db'</span><span class="p">).</span><span class="nx">CouchDB</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">couch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CouchDb</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span> 
+</pre></div>
+
+<h4>
+<a name="couchconfigopts" class="anchor" href="#couchconfigopts"><span class="octicon octicon-link"></span></a>couch.config([opts])</h4>
+
+<p>Get a Config instance to view/change db configurations</p>
+
+<ul>
+<li>opts {object=}</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">couch</span><span class="p">.</span><span class="nx">config</span><span class="p">();</span>
+</pre></div>
+
+<h4>
+<a name="couchdatabasedbname-opts" class="anchor" href="#couchdatabasedbname-opts"><span class="octicon octicon-link"></span></a>couch.database(dbname, [opts])</h4>
+
+<p>Get a Database instance from current couch with name as <em>dbname</em></p>
+
+<ul>
+<li>dbname {string}</li>
+<li>opts {object=}</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">couch</span><span class="p">.</span><span class="nx">database</span><span class="p">(</span><span class="s1">'testdb'</span><span class="p">);</span>
+</pre></div>
+
+<h4>
+<a name="couchbinddbname-opts" class="anchor" href="#couchbinddbname-opts"><span class="octicon octicon-link"></span></a>couch.bind(dbname, [opts])</h4>
+
+<h4>
+<a name="couchunbinddbname" class="anchor" href="#couchunbinddbname"><span class="octicon octicon-link"></span></a>couch.unbind(dbname)</h4>
+
+<h4>
+<a name="couchexistsdbdbname-callback" class="anchor" href="#couchexistsdbdbname-callback"><span class="octicon octicon-link"></span></a>couch.existsDb(dbname, callback)</h4>
+
+<p>Test whether a database is existed, only available for couchdb &gt;= 1.5.</p>
+
+<h4>
+<a name="couchalldbscallback" class="anchor" href="#couchalldbscallback"><span class="octicon octicon-link"></span></a>couch.allDbs(callback)</h4>
+
+<h4>
+<a name="couchalldesigndocscallback" class="anchor" href="#couchalldesigndocscallback"><span class="octicon octicon-link"></span></a>couch.allDesignDocs(callback)</h4>
+
+<h4>
+<a name="couchauthusername-password" class="anchor" href="#couchauthusername-password"><span class="octicon octicon-link"></span></a>couch.auth(username, password)</h4>
+
+<h4>
+<a name="couchloginusername-password-callback" class="anchor" href="#couchloginusername-password-callback"><span class="octicon octicon-link"></span></a>couch.login(username, password, callback)</h4>
+
+<p>Use session login.</p>
+
+<h4>
+<a name="couchlogoutcallback" class="anchor" href="#couchlogoutcallback"><span class="octicon octicon-link"></span></a>couch.logout(callback)</h4>
+
+<p>Do logout.</p>
+
+<h4>
+<a name="couchsessioncallback" class="anchor" href="#couchsessioncallback"><span class="octicon octicon-link"></span></a>couch.session(callback)</h4>
+
+<p>Return current session information.</p>
+
+<h4>
+<a name="couchinfocallback" class="anchor" href="#couchinfocallback"><span class="octicon octicon-link"></span></a>couch.info(callback)</h4>
+
+<p>Get basic information about the couch server.</p>
+
+<h4>
+<a name="couchstatsstatisticid-callback" class="anchor" href="#couchstatsstatisticid-callback"><span class="octicon octicon-link"></span></a>couch.stats(statisticId, callback)</h4>
+
+<p>Return statistic information.</p>
+
+<h4>
+<a name="couchnewuuidsn-callback" class="anchor" href="#couchnewuuidsn-callback"><span class="octicon octicon-link"></span></a>couch.newUuids(n, callback)</h4>
+
+<p>Return <em>n</em> uuids.</p>
+
+<h3>
+<a name="config" class="anchor" href="#config"><span class="octicon octicon-link"></span></a>Config</h3>
+
+<h3>
+<a name="database" class="anchor" href="#database"><span class="octicon octicon-link"></span></a>Database</h3>
+
+<h4>
+<a name="dbtempview" class="anchor" href="#dbtempview"><span class="octicon octicon-link"></span></a>db.tempView</h4>
+
+<h3>
+<a name="document" class="anchor" href="#document"><span class="octicon octicon-link"></span></a>Document</h3>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/villadora/node-couchdb/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/villadora/node-couchdb/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/villadora/node-couchdb"></a> is maintained by <a href="https://github.com/villadora">villadora</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
