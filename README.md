@@ -9,9 +9,7 @@ But when your applications heavily depends on couch, you may want something that
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [APIs](#apis)
-   - [CouchDB](#couchdb)
-   - [Database](#database)
+- [Documentations](#documentations)
 - [License](#license)
 
 ## Features
@@ -21,7 +19,7 @@ But when your applications heavily depends on couch, you may want something that
 * Chain for query paramters, easy and clean
 * All the concepts (View, Document, etc.) are seperated, which make this lib support urls that get rewritted
 * Treat DesignDoc the same as Document, you can do operations on DesignDoc
-* Support Https
+* Support Https, via request
 
 
 ## Installation
@@ -126,111 +124,66 @@ db.destroy(function(err) {
 });
 ```
 
-## APIs
+### create new document with attachments
 
-### Options
+``` javascript
+// new document
+var doc = db.testdb.doc({});
+doc.attach([{
+    name: 'place.css',
+    content_type: 'text/css',
+    data: 'body { font-size: 12px; }'
+}, {
+    name: 'script.js',
+    content_type: 'script/javascript',
+    data: 'window.onload(function() {})'
+}]).create(function(err) {
 
-Most of classes in this lib is accept an option object to let you configure the behaviors that how to request to the server.
+});
 
-All the options that you can pass to [request](mikeal/request), you can set here. So you can control whether use _strictSSL_, _proxy_ yourself.
-
-Is there any other additional options that is used by [couch-db][villadora/node-couchdb)?
-
-None except one: _request_. The request options is let user to take full control of how to send request to the server, and of course, you have to follow the _request_ api. Via this options, you can do cache layer to reduce request via modules like [modified](kaelzhang/node-modified), or even intercept the response.
-
-So except the _request_ field, you can treat the options is the same as options in [request](https://github.com/mikeal/request).
-
-You can go and see the doc [there](https://github.com/mikeal/request).
-
-### CouchDB
-
-#### new CouchDB(url, [options])
-
-* url {string} couchdb address
-* options {object=} 
-
-```js
-var CouchDB = require('couch-db').CouchDB;
-var couch = new CouchDb(url, options); 
 ```
 
-#### couch.config([opts])
+### add/retrieve/update attachment
 
-Get a Config instance to view/change db configurations
+```javascript
+// existing document
+var doc = db.testdb.doc({
+    _id: 'docid'
+});
 
-* opts {object=}
-
-```js
-var config = couch.config();
+// open to get revision or assign revision to the document
+doc.open(function(err) {
+    doc.attach('plain.css, 'body { font-size:12pt; }', 'text/css');
+    // save the doc
+    doc.save(function(err, rs) {
+        var plain = doc.attachment('plain.txt');
+        // retrieve attachment
+        plain.get(function(err, body) {
+            assert.equal(body, 'body { font-size:12pt; }');
+            // update
+            plain.update('body { font-size:14pt; }', 'text/css', function(err) {
+                plain.get(function(err, body) {
+                    assert.equal(body, 'body { font-size:14pt; }');
+                });
+            });
+        });
+    });
+});
 ```
 
-#### couch.database(dbname, [opts])
+### add attachments with pipe
 
-Get a Database instance from current couch with name as _dbname_
-
-* dbname {string}
-* opts {object=}
-
-
-```js
-var db = couch.database('testdb');
+```javascript
+var d = doc.addAttachment('logo.png', null, 'image/png');
+if (!d) assert.fail('Failed to create connect stream');
+var s = fs.createReadStream(path.resolve(__dirname, './logo.png')).pipe(d);
+s.on('end', function() {});
 ```
 
-#### couch.bind(dbname, [opts])
 
-#### couch.unbind(dbname)
+## Documentations
 
-#### couch.existsDb(dbname, callback)
-
-Test whether a database is existed, only available for couchdb >= 1.5.
-
-#### couch.allDbs(callback)
-
-#### couch.allDesignDocs(callback)
-
-#### couch.auth(username, password)
-
-#### couch.login(username, password, callback)
-
-Use session login.
-
-#### couch.logout(callback)
-
-Do logout.
-
-#### couch.session(callback)
-
-Return current session information.
-
-#### couch.info(callback)
-
-
-Get basic information about the couch server.
-
-#### couch.stats(statisticId, callback)
-
-Return statistic information.
-
-#### couch.newUuids(n, callback)
-
-Return _n_ uuids.
-
-
-
-
-### Config
-
-
-### Database
-
-#### db.tempView
-
-
-### Document
-
-
-
-
+See [here](http://villadora.github.io/node-couchdb) for more detail documentations.
 
 
 ## License
