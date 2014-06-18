@@ -183,7 +183,7 @@ s.on('end', function() {});
 
 ## Documentations
 
-See [here](http://villadora.github.io/node-couchdb) for more detail documentations.
+See [here](http://node-couchdb.readthedocs.org/en/latest/) for full  documentations.
 
 
 ## License
