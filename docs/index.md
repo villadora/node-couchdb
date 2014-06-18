@@ -20,10 +20,10 @@ You can go and see the doc [there](https://github.com/mikeal/request).
 
 
 
-* [CouchDB](/couchdb.html)
-* [Database](/database.html)
-* [Config](/config.html)
-* [Document](/document.html)
+* [CouchDB](./couchdb)
+* [Database](./database)
+* [Config](./config)
+* [Document](./document)
 
 
 
