@@ -1,35 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <title>Node-couchdb by villadora</title>
 
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
-    <title>Node-couchdb by villadora</title>
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>Node-couchdb</h1>
-        <h2>An extendable couch client lib for nodejs</h2>
-        <a href="https://github.com/villadora/node-couchdb" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Node-couchdb</h1>
+        <p class="header">An extendable couch client lib for nodejs</p>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
-<a name="node-couchdb-client" class="anchor" href="#node-couchdb-client"><span class="octicon octicon-link"></span></a>Node Couchdb Client</h1>
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/villadora/node-couchdb/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/villadora/node-couchdb/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/villadora/node-couchdb">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/villadora">villadora</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="node-couchdb-client----" class="anchor" href="#node-couchdb-client----"><span class="octicon octicon-link"></span></a>Node Couchdb Client <a href="http://badge.fury.io/js/couch-db"><img src="https://badge.fury.io/js/couch-db.svg" alt="NPM version"></a> <a href="https://travis-ci.org/villadora/node-couchdb"><img src="https://travis-ci.org/villadora/node-couchdb.png" alt="Build Status"></a>  <a href="https://coveralls.io/r/villadora/node-couchdb"><img src="https://coveralls.io/repos/villadora/node-couchdb/badge.png" alt="Coverage Status"></a>
+</h1>
 
 <p>There are already many couchdb client in npm, and some of them are great projects, like <a href="https://github.com/dscape/nano">nano</a>, <a href="https://github.com/flatiron/cradle">cradle</a>, but still not implements the couchdb features that satisfied my needs in auth, view operations and flexibility. Some libs has fewer apis and failed to meet needs. Even some are not complete yet or not friendly to use. </p>
 
@@ -41,14 +44,8 @@
 <li><a href="#features">Features</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#usage">Usage</a></li>
-<li>
-<a href="#apis">APIs</a>
-
-<ul>
-<li><a href="#couchdb">CouchDB</a></li>
-<li><a href="#database">Database</a></li>
-</ul>
-</li>
+<li><a href="#documentations">Documentations</a></li>
+<li><a href="#license">License</a></li>
 </ul><h2>
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
@@ -58,7 +55,7 @@
 <li>Chain for query paramters, easy and clean</li>
 <li>All the concepts (View, Document, etc.) are seperated, which make this lib support urls that get rewritted</li>
 <li>Treat DesignDoc the same as Document, you can do operations on DesignDoc</li>
-<li>Support Https</li>
+<li>Support Https, via request</li>
 </ul><h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
@@ -161,138 +158,81 @@
 <span class="p">});</span>
 </pre></div>
 
+<h3>
+<a name="create-new-document-with-attachments" class="anchor" href="#create-new-document-with-attachments"><span class="octicon octicon-link"></span></a>create new document with attachments</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">// new document</span>
+<span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">testdb</span><span class="p">.</span><span class="nx">doc</span><span class="p">({});</span>
+<span class="nx">doc</span><span class="p">.</span><span class="nx">attach</span><span class="p">([{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">'place.css'</span><span class="p">,</span>
+    <span class="nx">content_type</span><span class="o">:</span> <span class="s1">'text/css'</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="s1">'body { font-size: 12px; }'</span>
+<span class="p">},</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">'script.js'</span><span class="p">,</span>
+    <span class="nx">content_type</span><span class="o">:</span> <span class="s1">'script/javascript'</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="s1">'window.onload(function() {})'</span>
+<span class="p">}]).</span><span class="nx">create</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+
+<span class="p">});</span>
+
+</pre></div>
+
+<h3>
+<a name="addretrieveupdate-attachment" class="anchor" href="#addretrieveupdate-attachment"><span class="octicon octicon-link"></span></a>add/retrieve/update attachment</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="c1">// existing document</span>
+<span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">testdb</span><span class="p">.</span><span class="nx">doc</span><span class="p">({</span>
+    <span class="nx">_id</span><span class="o">:</span> <span class="s1">'docid'</span>
+<span class="p">});</span>
+
+<span class="c1">// open to get revision or assign revision to the document</span>
+<span class="nx">doc</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">doc</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="s1">'plain.css, '</span><span class="nx">body</span> <span class="p">{</span> <span class="nx">font</span><span class="o">-</span><span class="nx">size</span><span class="o">:</span><span class="mi">12</span><span class="nx">pt</span><span class="p">;</span> <span class="p">}</span><span class="s1">', '</span><span class="nx">text</span><span class="o">/</span><span class="nx">css</span><span class="s1">');</span>
+<span class="s1">    // save the doc</span>
+<span class="s1">    doc.save(function(err, rs) {</span>
+<span class="s1">        var plain = doc.attachment('</span><span class="nx">plain</span><span class="p">.</span><span class="nx">txt</span><span class="s1">');</span>
+<span class="s1">        // retrieve attachment</span>
+<span class="s1">        plain.get(function(err, body) {</span>
+<span class="s1">            assert.equal(body, '</span><span class="nx">body</span> <span class="p">{</span> <span class="nx">font</span><span class="o">-</span><span class="nx">size</span><span class="o">:</span><span class="mi">12</span><span class="nx">pt</span><span class="p">;</span> <span class="p">}</span><span class="s1">');</span>
+<span class="s1">            // update</span>
+<span class="s1">            plain.update('</span><span class="nx">body</span> <span class="p">{</span> <span class="nx">font</span><span class="o">-</span><span class="nx">size</span><span class="o">:</span><span class="mi">14</span><span class="nx">pt</span><span class="p">;</span> <span class="p">}</span><span class="s1">', '</span><span class="nx">text</span><span class="o">/</span><span class="nx">css</span><span class="s1">', function(err) {</span>
+<span class="s1">                plain.get(function(err, body) {</span>
+<span class="s1">                    assert.equal(body, '</span><span class="nx">body</span> <span class="p">{</span> <span class="nx">font</span><span class="o">-</span><span class="nx">size</span><span class="o">:</span><span class="mi">14</span><span class="nx">pt</span><span class="p">;</span> <span class="p">}</span><span class="err">'</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">});</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="add-attachments-with-pipe" class="anchor" href="#add-attachments-with-pipe"><span class="octicon octicon-link"></span></a>add attachments with pipe</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">addAttachment</span><span class="p">(</span><span class="s1">'logo.png'</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">'image/png'</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">d</span><span class="p">)</span> <span class="nx">assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="s1">'Failed to create connect stream'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">createReadStream</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'./logo.png'</span><span class="p">)).</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+<span class="nx">s</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'end'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{});</span>
+</pre></div>
+
 <h2>
-<a name="apis" class="anchor" href="#apis"><span class="octicon octicon-link"></span></a>APIs</h2>
+<a name="documentations" class="anchor" href="#documentations"><span class="octicon octicon-link"></span></a>Documentations</h2>
 
-<h3>
-<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h3>
+<p>See <a href="http://villadora.github.io/node-couchdb">here</a> for more detail documentations.</p>
 
-<p>Most of classes in this lib is accept an option object to let you configure the behaviors that how to request to the server.</p>
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
-<p>All the options that you can pass to <a href="mikeal/request">request</a>, you can set here. So you can control whether use <em>strictSSL</em>, <em>proxy</em> yourself.</p>
+<p>(The BSD License)</p>
 
-<p>Is there any other additional options that is used by [couch-db][villadora/node-couchdb)?</p>
-
-<p>None except one: <em>request</em>. The request options is let user to take full control of how to send request to the server, and of course, you have to follow the <em>request</em> api. Via this options, you can do cache layer to reduce request via modules like <a href="kaelzhang/node-modified">modified</a>, or even intercept the response.</p>
-
-<p>So except the <em>request</em> field, you can treat the options is the same as options in <a href="https://github.com/mikeal/request">request</a>.</p>
-
-<p>You can go and see the doc <a href="https://github.com/mikeal/request">there</a>.</p>
-
-<h3>
-<a name="couchdb" class="anchor" href="#couchdb"><span class="octicon octicon-link"></span></a>CouchDB</h3>
-
-<h4>
-<a name="new-couchdburl-options" class="anchor" href="#new-couchdburl-options"><span class="octicon octicon-link"></span></a>new CouchDB(url, [options])</h4>
-
-<ul>
-<li>url {string} couchdb address</li>
-<li>options {object=} </li>
-</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">CouchDB</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'couch-db'</span><span class="p">).</span><span class="nx">CouchDB</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">couch</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CouchDb</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span> 
-</pre></div>
-
-<h4>
-<a name="couchconfigopts" class="anchor" href="#couchconfigopts"><span class="octicon octicon-link"></span></a>couch.config([opts])</h4>
-
-<p>Get a Config instance to view/change db configurations</p>
-
-<ul>
-<li>opts {object=}</li>
-</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">couch</span><span class="p">.</span><span class="nx">config</span><span class="p">();</span>
-</pre></div>
-
-<h4>
-<a name="couchdatabasedbname-opts" class="anchor" href="#couchdatabasedbname-opts"><span class="octicon octicon-link"></span></a>couch.database(dbname, [opts])</h4>
-
-<p>Get a Database instance from current couch with name as <em>dbname</em></p>
-
-<ul>
-<li>dbname {string}</li>
-<li>opts {object=}</li>
-</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">couch</span><span class="p">.</span><span class="nx">database</span><span class="p">(</span><span class="s1">'testdb'</span><span class="p">);</span>
-</pre></div>
-
-<h4>
-<a name="couchbinddbname-opts" class="anchor" href="#couchbinddbname-opts"><span class="octicon octicon-link"></span></a>couch.bind(dbname, [opts])</h4>
-
-<h4>
-<a name="couchunbinddbname" class="anchor" href="#couchunbinddbname"><span class="octicon octicon-link"></span></a>couch.unbind(dbname)</h4>
-
-<h4>
-<a name="couchexistsdbdbname-callback" class="anchor" href="#couchexistsdbdbname-callback"><span class="octicon octicon-link"></span></a>couch.existsDb(dbname, callback)</h4>
-
-<p>Test whether a database is existed, only available for couchdb &gt;= 1.5.</p>
-
-<h4>
-<a name="couchalldbscallback" class="anchor" href="#couchalldbscallback"><span class="octicon octicon-link"></span></a>couch.allDbs(callback)</h4>
-
-<h4>
-<a name="couchalldesigndocscallback" class="anchor" href="#couchalldesigndocscallback"><span class="octicon octicon-link"></span></a>couch.allDesignDocs(callback)</h4>
-
-<h4>
-<a name="couchauthusername-password" class="anchor" href="#couchauthusername-password"><span class="octicon octicon-link"></span></a>couch.auth(username, password)</h4>
-
-<h4>
-<a name="couchloginusername-password-callback" class="anchor" href="#couchloginusername-password-callback"><span class="octicon octicon-link"></span></a>couch.login(username, password, callback)</h4>
-
-<p>Use session login.</p>
-
-<h4>
-<a name="couchlogoutcallback" class="anchor" href="#couchlogoutcallback"><span class="octicon octicon-link"></span></a>couch.logout(callback)</h4>
-
-<p>Do logout.</p>
-
-<h4>
-<a name="couchsessioncallback" class="anchor" href="#couchsessioncallback"><span class="octicon octicon-link"></span></a>couch.session(callback)</h4>
-
-<p>Return current session information.</p>
-
-<h4>
-<a name="couchinfocallback" class="anchor" href="#couchinfocallback"><span class="octicon octicon-link"></span></a>couch.info(callback)</h4>
-
-<p>Get basic information about the couch server.</p>
-
-<h4>
-<a name="couchstatsstatisticid-callback" class="anchor" href="#couchstatsstatisticid-callback"><span class="octicon octicon-link"></span></a>couch.stats(statisticId, callback)</h4>
-
-<p>Return statistic information.</p>
-
-<h4>
-<a name="couchnewuuidsn-callback" class="anchor" href="#couchnewuuidsn-callback"><span class="octicon octicon-link"></span></a>couch.newUuids(n, callback)</h4>
-
-<p>Return <em>n</em> uuids.</p>
-
-<h3>
-<a name="config" class="anchor" href="#config"><span class="octicon octicon-link"></span></a>Config</h3>
-
-<h3>
-<a name="database" class="anchor" href="#database"><span class="octicon octicon-link"></span></a>Database</h3>
-
-<h4>
-<a name="dbtempview" class="anchor" href="#dbtempview"><span class="octicon octicon-link"></span></a>db.tempView</h4>
-
-<h3>
-<a name="document" class="anchor" href="#document"><span class="octicon octicon-link"></span></a>Document</h3>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/villadora/node-couchdb/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/villadora/node-couchdb/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/villadora/node-couchdb"></a> is maintained by <a href="https://github.com/villadora">villadora</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+<pre><code>Copyright (c) 2014, Villa.Gao &lt;jky239@gmail.com&gt;;
+All rights reserved.
+</code></pre>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
     </div>
-
-  
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
   </body>
 </html>
