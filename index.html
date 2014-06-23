@@ -43,7 +43,7 @@
 <li><a href="#features">Features</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#usage">Usage</a></li>
-<li><a href="#documentations">Documentations</a></li>
+<li><a href="http://node-couchdb.readthedocs.org/en/latest/">Documentations</a></li>
 <li><a href="#license">License</a></li>
 </ul><h2>
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
@@ -63,6 +63,21 @@
 
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a name="about-options" class="anchor" href="#about-options"><span class="octicon octicon-link"></span></a>About Options</h3>
+
+<p>Most of classes in this lib is accept an option object to let you configure the behaviors that how to request to the server.</p>
+
+<p>All the options that you can pass to <a href="mikeal/request">request</a>, you can set here. So you can control whether use <em>strictSSL</em>, <em>proxy</em> yourself.</p>
+
+<p>Is there any other additional options that is used by [couch-db][villadora/node-couchdb)?</p>
+
+<p>None except one: <em>request</em>. The request options is let user to take full control of how to send request to the server, and of course, you have to follow the <em>request</em> api. Via this options, you can do cache layer to reduce request via modules like <a href="kaelzhang/node-modified">modified</a>, or even intercept the response.</p>
+
+<p>So except the <em>request</em> field, you can treat the options is the same as options in <a href="https://github.com/mikeal/request">request</a>.</p>
+
+<p>You can go and see the doc <a href="https://github.com/mikeal/request">there</a>.</p>
 
 <h4>
 <a name="create-a-couch-server" class="anchor" href="#create-a-couch-server"><span class="octicon octicon-link"></span></a>Create a couch server</h4>
@@ -186,17 +201,17 @@
 
 <span class="c1">// open to get revision or assign revision to the document</span>
 <span class="nx">doc</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">doc</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="s1">'plain.css, '</span><span class="nx">body</span> <span class="p">{</span> <span class="nx">font</span><span class="o">-</span><span class="nx">size</span><span class="o">:</span><span class="mi">12</span><span class="nx">pt</span><span class="p">;</span> <span class="p">}</span><span class="s1">', '</span><span class="nx">text</span><span class="o">/</span><span class="nx">css</span><span class="s1">');</span>
-<span class="s1">    // save the doc</span>
-<span class="s1">    doc.save(function(err, rs) {</span>
-<span class="s1">        var plain = doc.attachment('</span><span class="nx">plain</span><span class="p">.</span><span class="nx">txt</span><span class="s1">');</span>
-<span class="s1">        // retrieve attachment</span>
-<span class="s1">        plain.get(function(err, body) {</span>
-<span class="s1">            assert.equal(body, '</span><span class="nx">body</span> <span class="p">{</span> <span class="nx">font</span><span class="o">-</span><span class="nx">size</span><span class="o">:</span><span class="mi">12</span><span class="nx">pt</span><span class="p">;</span> <span class="p">}</span><span class="s1">');</span>
-<span class="s1">            // update</span>
-<span class="s1">            plain.update('</span><span class="nx">body</span> <span class="p">{</span> <span class="nx">font</span><span class="o">-</span><span class="nx">size</span><span class="o">:</span><span class="mi">14</span><span class="nx">pt</span><span class="p">;</span> <span class="p">}</span><span class="s1">', '</span><span class="nx">text</span><span class="o">/</span><span class="nx">css</span><span class="s1">', function(err) {</span>
-<span class="s1">                plain.get(function(err, body) {</span>
-<span class="s1">                    assert.equal(body, '</span><span class="nx">body</span> <span class="p">{</span> <span class="nx">font</span><span class="o">-</span><span class="nx">size</span><span class="o">:</span><span class="mi">14</span><span class="nx">pt</span><span class="p">;</span> <span class="p">}</span><span class="err">'</span><span class="p">);</span>
+    <span class="nx">doc</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="s1">'plain.css'</span><span class="p">,</span> <span class="s1">'body { font-size:12pt; }'</span><span class="p">,</span> <span class="s1">'text/css'</span><span class="p">);</span>
+    <span class="c1">// save the doc</span>
+    <span class="nx">doc</span><span class="p">.</span><span class="nx">save</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">rs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">plain</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">attachment</span><span class="p">(</span><span class="s1">'plain.txt'</span><span class="p">);</span>
+        <span class="c1">// retrieve attachment</span>
+        <span class="nx">plain</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="nx">body</span><span class="p">,</span> <span class="s1">'body { font-size:12pt; }'</span><span class="p">);</span>
+            <span class="c1">// update</span>
+            <span class="nx">plain</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="s1">'body { font-size:14pt; }'</span><span class="p">,</span> <span class="s1">'text/css'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">plain</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">assert</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="nx">body</span><span class="p">,</span> <span class="s1">'body { font-size:14pt; }'</span><span class="p">);</span>
                 <span class="p">});</span>
             <span class="p">});</span>
         <span class="p">});</span>
@@ -214,9 +229,9 @@
 </pre></div>
 
 <h2>
-<a name="documentations" class="anchor" href="#documentations"><span class="octicon octicon-link"></span></a>Documentations</h2>
+<a name="apis" class="anchor" href="#apis"><span class="octicon octicon-link"></span></a>APIs</h2>
 
-<p>See <a href="http://villadora.github.io/node-couchdb">here</a> for more detail documentations.</p>
+<p>See details in <a href="http://node-couchdb.readthedocs.org/en/latest/">readthedocs</a></p>
 
 <h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
