@@ -9,7 +9,7 @@ But when your applications heavily depends on couch, you may want something that
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Documentations](#documentations)
+- [Documentations](http://node-couchdb.readthedocs.org/en/latest/)
 - [License](#license)
 
 ## Features
@@ -27,6 +27,20 @@ But when your applications heavily depends on couch, you may want something that
     npm install couch-db --save
 
 ## Usage
+
+### About Options
+
+Most of classes in this lib is accept an option object to let you configure the behaviors that how to request to the server.
+
+All the options that you can pass to [request](mikeal/request), you can set here. So you can control whether use _strictSSL_, _proxy_ yourself.
+
+Is there any other additional options that is used by [couch-db][villadora/node-couchdb)?
+
+None except one: _request_. The request options is let user to take full control of how to send request to the server, and of course, you have to follow the _request_ api. Via this options, you can do cache layer to reduce request via modules like [modified](kaelzhang/node-modified), or even intercept the response.
+
+So except the _request_ field, you can treat the options is the same as options in [request](https://github.com/mikeal/request).
+
+You can go and see the doc [there](https://github.com/mikeal/request).
 
 #### Create a couch server
 
@@ -153,7 +167,7 @@ var doc = db.testdb.doc({
 
 // open to get revision or assign revision to the document
 doc.open(function(err) {
-    doc.attach('plain.css, 'body { font-size:12pt; }', 'text/css');
+    doc.attach('plain.css', 'body { font-size:12pt; }', 'text/css');
     // save the doc
     doc.save(function(err, rs) {
         var plain = doc.attachment('plain.txt');
@@ -180,10 +194,10 @@ var s = fs.createReadStream(path.resolve(__dirname, './logo.png')).pipe(d);
 s.on('end', function() {});
 ```
 
+## APIs
 
-## Documentations
+See details in [readthedocs](http://node-couchdb.readthedocs.org/en/latest/)
 
-See [here](http://node-couchdb.readthedocs.org/en/latest/) for full  documentations.
 
 
 ## License

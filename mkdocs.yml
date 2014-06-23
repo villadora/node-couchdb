@@ -2,3 +2,5 @@ site_name: Documentation for 'couch-db'
 pages:
   - [index.md, Home]
   - [couchdb.md, CouchDB]
+  - [ddoc.md, DesignDoc]
+  - [view.md, View]

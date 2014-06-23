@@ -23,7 +23,9 @@ You can go and see the doc [there](https://github.com/mikeal/request).
 * [CouchDB](./couchdb)
 * [Database](./database)
 * [Config](./config)
+* [DesignDoc](./designdoc)
 * [Document](./document)
+* [View](./view)
 
 
 
