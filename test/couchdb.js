@@ -165,11 +165,16 @@ describe('couchdb', function() {
     });
 
     it('dbUpdates', function(done) {
-      if (semver.satisfies(version, '>=1.4'))
+      if (semver.satisfies(version, '>=1.4')) {
+
         db.dbUpdates(function(err, updates) {
-          done(err);
+          db.database('newtestdb').destroy(function(err1) {
+            if(err) return done(err);
+            done(err1);
+          });
         });
-      else
+        db.database('newtestdb').create();
+      } else
         done();
     });
   });

@@ -47,7 +47,7 @@ describe('dbs', function() {
     });
   });
 
-  it('follow with callback', function(done) {
+  it.skip('follow with callback', function(done) {
     db.testdb.follow({
       include_docs: true
     }, function(err, data) {
@@ -65,7 +65,7 @@ describe('dbs', function() {
     }]);
   });
 
-  it('follow with feed', function(done) {
+  it.skip('follow with feed', function(done) {
     var feed = db.testdb.follow({
       include_docs: true
     });
