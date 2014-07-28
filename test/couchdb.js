@@ -89,105 +89,79 @@ describe('couchdb', function() {
   });
 
 
-  describe('require auth', function() {
 
-    before(function(done) {
-      db.auth();
-      if (config.user)
-        db.login(config.user, config.pass, function(err, res) {
-          assert(res.ok);
-          done(err);
-        });
-      else done();
-    });
-
-
-    after(function(done) {
-      if (config.user)
-        db.logout(function(err) {
-          db.auth(config.user, config.pass);
-          done(err);
-        });
-      else done();
-    });
-
-    it('session', function(done) {
-      db.session(function(err, session) {
-        done(err);
-      });
-    });
-
-
-    it('stats', function(done) {
-      db.stats(function(err, stat) {
-        assert(stat);
-        assert(stat.couchdb);
-        if (err) return done(err);
-        db.stats('request_time', function(err, stat) {
-          assert(stat.couchdb.request_time);
-          done(err);
-        });
-      });
-    });
-
-
-    it('activeTasks', function(done) {
-      db.activeTasks(function(err, tasks) {
-        assert(tasks instanceof Array);
-        done(err);
-      });
-    });
-
-
-
-    it('log', function(done) {
-      db.log(function(err, logs) {
-        if (err) return done(err);
-        assert(typeof logs == 'string');
-        assert(logs.length > 0);
-
-        db.log(0, function(err, logs) {
-          if (err) return done(err);
-          assert(logs.length === 0);
-          db.log(50, 10,
-            function(err, logs) {
-              done(err);
-            });
-        });
-      });
-    });
-
-    it('allDesignDocs', function(done) {
-      db.allDesignDocs(function(err, ddocs) {
-        assert(ddocs);
-        done(err);
-      });
-    });
-
-    it('dbUpdates', function(done) {
-      if (semver.satisfies(version, '>=1.4')) {
-
-        db.dbUpdates(function(err, updates) {
-          db.database('newtestdb').destroy(function(err1) {
-            if(err) return done(err);
-            done(err1);
-          });
-        });
-        db.database('newtestdb').create();
-      } else
-        done();
+  it('session', function(done) {
+    db.session(function(err, session) {
+      done(err);
     });
   });
 
 
-  describe.skip('others', function() {
-    it('restart', function(done) {
-      db.restart(function(err) {
+  it('stats', function(done) {
+    db.stats(function(err, stat) {
+      assert(stat);
+      assert(stat.couchdb);
+      if (err) return done(err);
+      db.stats('request_time', function(err, stat) {
+        assert(stat.couchdb.request_time);
         done(err);
       });
     });
+  });
 
 
+  it('activeTasks', function(done) {
+    db.activeTasks(function(err, tasks) {
+      assert(tasks instanceof Array);
+      done(err);
+    });
+  });
+
+
+
+  it('log', function(done) {
+    db.log(function(err, logs) {
+      if (err) return done(err);
+      assert(typeof logs == 'string');
+      assert(logs.length > 0);
+
+      db.log(0, function(err, logs) {
+        if (err) return done(err);
+        assert(logs.length === 0);
+        db.log(50, 10,
+          function(err, logs) {
+            done(err);
+          });
+      });
+    });
+  });
+
+  it('allDesignDocs', function(done) {
+    db.allDesignDocs(function(err, ddocs) {
+      assert(ddocs);
+      done(err);
+    });
+  });
+
+  it('dbUpdates', function(done) {
+    if (semver.satisfies(version, '>=1.4')) {
+
+      db.dbUpdates(function(err, updates) {
+        db.database('newtestdb').destroy(function(err1) {
+          if (err) return done(err);
+          done(err1);
+        });
+      });
+      db.database('newtestdb').create();
+    } else
+      done();
+  });
+
+
+  it.skip('restart', function(done) {
+    db.restart(function(err) {
+      done(err);
+    });
   });
 
 });
