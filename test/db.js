@@ -98,10 +98,6 @@ describe('dbs', function() {
       new Database();
     });
 
-    assert.throws(function() {
-      new Database('url');
-    });
-
     var dbc = db.database('db_create');
     dbc.destroy(function() {
       dbc.create(function(err) {
@@ -119,7 +115,7 @@ describe('dbs', function() {
   });
 
   it('newUuids', function() {
-    var db = new Database('url', 'db');
+    var db = new Database('url');
     assert.throws(function() {
       db.newUuids(5);
     });
@@ -322,9 +318,9 @@ describe('dbs', function() {
 
   it('purge', function(done) {
     db.testdb.purge({
-      id: []
-    },
-                    done);
+        id: []
+      },
+      done);
   });
 
   describe('require auth', function() {
@@ -363,7 +359,7 @@ describe('dbs', function() {
         name: 'alex',
         age: 24
       }, {
-          name: 'lee',
+        name: 'lee',
         age: 26
       }];
 

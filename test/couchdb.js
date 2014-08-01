@@ -11,7 +11,8 @@ var assert = require('chai').assert,
 describe('couchdb', function() {
   this.timeout(3000);
 
-  var db;
+  var db, version;
+
   before(function(done) {
     db = new CouchDB(config.url);
     db.login(config.user, config.pass, function(err) {
@@ -145,14 +146,16 @@ describe('couchdb', function() {
 
   it('dbUpdates', function(done) {
     if (semver.satisfies(version, '>=1.4')) {
-
       db.dbUpdates(function(err, updates) {
         db.database('newtestdb').destroy(function(err1) {
           if (err) return done(err);
           done(err1);
         });
       });
-      db.database('newtestdb').create();
+
+      setTimeout(function() {
+        db.database('newtestdb').create();
+      }, 500);
     } else
       done();
   });
