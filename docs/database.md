@@ -53,7 +53,7 @@ Get documents from database.
 * options {Object=} options available for `_all_docs` api
 
 
-## searchByKeys([starkey, endkey]|[keys], [options], callback)
+## searchByKeys([startkey, endkey]|[keys], [options], callback)
 
 Search document by keys. A range with [startkey, endkey] can be provided, or an array of `keys` can be specified.
 
@@ -92,7 +92,7 @@ Execute the query
 
 ```javscript
 db.select().limit(10).descending(true).betweenKeys(startKey, endKey).exec(function(err, rs) {
-  
+
 });
 ```
 
@@ -119,4 +119,3 @@ db.select().limit(10).descending(true).betweenKeys(startKey, endKey).exec(functi
 * ids {Array.<string>} documents' ids
 
 ## tempView(mapFn, reduceFn, [options], callback)
-
